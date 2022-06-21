@@ -1,0 +1,26 @@
+.navegante{
+    background-color: #8c52ff;
+    margin: 0px;
+    height: 55px;
+    width: 100%;
+    column-gap: 10px; 
+    border: 0px;
+    position: relative;
+    top: 0%;
+}
+body{
+    background-image: linear-gradient(rgb(180, 168, 247),rgb(199, 192, 241));
+}
+
+.corpo{
+    border: 10px;
+    width: 100%;
+    height: fit-content;
+    vertical-align: text-top;
+}
+#mapa{
+    width: 100%;
+}
+#registrarOcorrencia{
+    text-align: center;
+}

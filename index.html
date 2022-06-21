@@ -1,0 +1,79 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>  
+    <title>PSCAA</title>
+</head>
+<body>
+    <div>
+        <table class="navegante">
+            <tr>
+                <td><a href="index.html"><img src="imgs/Screenshot_6.png" alt="logo" height="50px"></a></td>
+                <td id="registarOcorrencia"></td>
+                <td align="right">
+                    <button>Register</button>
+                    <button onclick="logado()">Login</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <table class="corpo">
+            <tr>
+                <td style="width:30%" class="corpo">
+                        <h2>Selecione Ocorrência</h2>
+                        <h3>Busca Geral:</h3>
+                            <table>
+                                <tr><td>
+                                    <label for="rodovia">Selecione a Rodovia:</label>
+                                </td><td>
+                                    <select name="rodovia" id="rodovia">
+                                        <option value="" disabled selected>Selecione</option>
+                                        <option value="br101">BR-101</option>
+                                        <option value="br116">BR-116</option>
+                                        <option value="br153">BR-153</option>
+                                    </select>
+                                </td></tr>
+                                <tr><td>
+                                    <label for="dIni">Selecione a data inicial:</label>
+                                </td><td>
+                                    <input type="date" name="dIni" id="dIni">
+                                </td></tr>
+                                <tr><td>
+                                    <label for="dFin">Selecione a data final:</label>
+                                </td><td>
+                                    <input type="date" name="dFin" id="dFin">
+                                </td></tr>
+                                <tr>
+                                    <td><button onclick="buscaSemID()">Buscar</button>
+                                    <input type="reset" value="Limpar"></td>
+                                </tr>  
+
+                        </table>
+                        <hr>
+                        <h3>Busca por ID:</h3>
+                        <form action="" method="get">
+                        <label for="idBusca">Digite o ID:</label>
+                        <input type="text" name="idBusca" id="idBusca" required> 
+                        <button onclick="buscaByID()">Buscar</button>
+                        </form>
+                </td>
+                <td rowspan="2">
+                    <img id="mapa" src="imgs/pr.jpg" alt="mapa do paraná">
+                </td>
+            </tr>
+            <tr>
+                <td style="width:30%">
+                    <hr>
+                    <h2>Estatísticas:</h2>
+                    <img src="imgs/graficoExemplo.png" alt="graficoExemplo">
+                    <p style="text-align: right;"><a href="estatisticas.html">mais estatisticas...</a></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>
