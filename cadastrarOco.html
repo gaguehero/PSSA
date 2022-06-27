@@ -6,19 +6,25 @@
     <link rel="stylesheet" href="style.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="script.js"></script>   
-    <title>Login</title>
+    <title>PSCAA</title>
 </head>
-<body onload="logado()">
+<body>
     <nav class="horizontal-menu">
-
         <ul>
             <li><a href="index.html">Home</a></li>
             <li><a href="estatisticas.html">Estatísticas</a></li>
-            <li id="cadastrarOcorrencia"><a href="#">Cadastrar</a></li>
-            <li id="register"><a href="#">Register</a></li>
-            <li id="login"><a href="login.html">Login</a></li>
+            <li><a href="sobre.html">Sobre Nós</a></li>
+            <li><a href="howto.html">Como Usar</a></li>
         </ul>
     </nav>
-    <div class="corpo">Logado</div>
+    <div>
+        <h3>
+            Cadastre nova ocorrência:
+        </h3>
+        <label for="getAno">Ano de nova ocorrência</label>
+        <input type="number" name="ano" id="getAno">
+        <button onclick="addData()">Submit!</button>
+    </div>
+    <div id="estatisticas" style="height: 50%;"></div>
 </body>
 </html>

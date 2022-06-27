@@ -1,25 +1,27 @@
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>  
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="script.js"></script>   
     <title>PSCAA</title>
 </head>
-<body>
-    <div>
-        <table class="navegante">
-            <tr>
-                <td><a href="index.html"><img src="imgs/Screenshot_6.png" alt="logo" height="50px"></a></td>
-                <td id="registarOcorrencia"></td>
-                <td align="right">
-                    <button>Register</button>
-                    <button onclick="logado()">Login</button>
-                </td>
-            </tr>
-        </table>
-    </div>
+<body onload="carregaChart()">
+   <nav class="horizontal-menu">
+
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="estatisticas.html">Estatísticas</a></li>
+        <li><a href="sobre.html">Sobre Nós</a></li>
+        <li><a href="howto.html">Como Usar</a></li>
+        <li id="cadastrarOcorrencia"><a href="cadastrarOco.html">Cadastrar Ocorrência</a></li>
+        <li style="visibility: hidden;">vamoateofinaldessenegociodasdadsadasdasdafasdasdasdasdfagvcasdasdfavasdfasdasdasdafadas</li>
+        <li id="registrar"><a href="#">Registrar</a></li>
+        <li id="login"><a href='#' onclick='return logado(1)'>Login</a></li>
+    </ul>
+   </nav>
     <div>
         <table class="corpo">
             <tr>
@@ -69,11 +71,14 @@
                 <td style="width:30%">
                     <hr>
                     <h2>Estatísticas:</h2>
-                    <img src="imgs/graficoExemplo.png" alt="graficoExemplo">
+                    <div id = 'estatisticas'></div>
                     <p style="text-align: right;"><a href="estatisticas.html">mais estatisticas...</a></p>
                 </td>
             </tr>
         </table>
+    </div>
+    <div id="busca">
+        <h3>Dados de busca</h3>
     </div>
 </body>
 </html>
