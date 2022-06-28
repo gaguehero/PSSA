@@ -12,13 +12,14 @@
    <nav class="horizontal-menu">
 
     <ul>
+        <li><img src="imgs/Screenshot_6.png" alt="" height="40px"></li>
         <li><a href="index.html">Home</a></li>
         <li><a href="estatisticas.html">Estatísticas</a></li>
         <li><a href="sobre.html">Sobre Nós</a></li>
         <li><a href="howto.html">Como Usar</a></li>
         <li id="cadastrarOcorrencia"><a href="cadastrarOco.html">Cadastrar Ocorrência</a></li>
-        <li style="visibility: hidden;">vamoateofinaldessenegociodasdadsadasdasdafasdasdasdasdfagvcasdasdfavasdfasdasdasdafadas</li>
-        <li id="registrar"><a href="#">Registrar</a></li>
+        <li style="visibility: hidden;">vamoateofinaldesasddsadasdasdafasdasdasdasdfagvcasdasdfavasdfasdasdasdafadas</li>
+        <li id="registrar"><a href="#" onclick="return registrado()">Registrar</a></li>
         <li id="login"><a href='#' onclick='return logado(1)'>Login</a></li>
     </ul>
    </nav>
@@ -34,9 +35,9 @@
                                 </td><td>
                                     <select name="rodovia" id="rodovia">
                                         <option value="" disabled selected>Selecione</option>
-                                        <option value="br101">BR-101</option>
                                         <option value="br116">BR-116</option>
                                         <option value="br153">BR-153</option>
+                                        <option value="br158">BR-158</option>
                                     </select>
                                 </td></tr>
                                 <tr><td>
@@ -51,7 +52,7 @@
                                 </td></tr>
                                 <tr>
                                     <td><button onclick="buscaSemID()">Buscar</button>
-                                    <input type="reset" value="Limpar"></td>
+                                    <button onclick="limpar()">Limpar</button></td>
                                 </tr>  
 
                         </table>
@@ -64,7 +65,7 @@
                         </form>
                 </td>
                 <td rowspan="2">
-                    <img id="mapa" src="imgs/pr.jpg" alt="mapa do paraná">
+                    <iframe id="mapa" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7432471.978817971!2d-55.816375603025236!3d-24.549937469674937!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94db0b9430b8629d%3A0xe893fd5063cef061!2zUGFyYW7DoQ!5e0!3m2!1spt-BR!2sbr!4v1656436044618!5m2!1spt-BR!2sbr" width='100%' height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </td>
             </tr>
             <tr>

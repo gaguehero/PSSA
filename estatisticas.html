@@ -1,11 +1,30 @@
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estatísticas</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="script.js"></script>   
+    <title>PSCAA</title>
 </head>
-<body>
-    Stats
+<body onload="povoarEstatisticas()">
+    <nav class="horizontal-menu">
+        <ul>
+            <li><img src="imgs/Screenshot_6.png" alt="" height="40px"></li>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="estatisticas.html">Estatísticas</a></li>
+            <li><a href="sobre.html">Sobre Nós</a></li>
+            <li><a href="howto.html">Como Usar</a></li>
+        </ul>
+    </nav>
+    <div>
+        <span id="graph1" class="grafake"></span>
+        <span id="graph2" class="grafake"></span>
+    </div>
+    <div>
+        <span id="graph3" class="grafake"></span>
+        <span id="graph4" class="grafake"></span>
+    </div>
 </body>
 </html>

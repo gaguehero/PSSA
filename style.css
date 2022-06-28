@@ -7,9 +7,12 @@ ul {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #333;
+    background-color: #8c52ff;
 }
-
+a{
+    color: #333;
+    font-weight: bold;
+}
 li {
     float: left;
 }
@@ -24,7 +27,7 @@ li a {
 
 /* Change the link color to #111 (black) on hover */
 li a:hover {
-    background-color: #8c52ff;
+    background-color: #333;
 }
 #cadastrarOcorrencia{
     visibility: hidden;
@@ -49,3 +52,28 @@ li a:hover {
     text-align: right;
 }
 
+#aboutlogo{
+    display: block;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.sobreDesc{
+    display: block;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.nameImportant{
+    font-size: 20px;
+}
+.fotoEquipe{
+    float: left;
+    height: 120px;
+    margin: 5px;
+}
+.grafake{
+    display:inline-block;
+    height: 45%;
+    width: 33%;
+}
