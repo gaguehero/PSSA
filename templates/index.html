@@ -1,0 +1,90 @@
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin="" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="style.css"/>
+
+    <title>PSCAA</title>
+</head>
+<body onload="carregaChart()">
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script> 
+    <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+    <script src="script.js"></script>
+   <nav class="horizontal-menu">
+
+    <ul>
+        <li><img src="imgs/Screenshot_6.png" alt="" height="40px"></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="estatisticas.html">Estatísticas</a></li>
+        <li><a href="sobre.html">Sobre Nós</a></li>
+        <li><a href="howto.html">Como Usar</a></li>
+        <li id="cadastrarOcorrencia"><a href="cadastrarOco.html">Cadastrar Ocorrência</a></li>
+        <li style="visibility: hidden;">vamoateofinaldesasddsadasdasdafasdasdasdasdfagvcasdasdfavasdfasdasdasdafadas</li>
+        <li id="registrar"><a href="#" onclick="return registrado()">Registrar</a></li>
+        <li id="login"><a href='#' onclick='return logado(1)'>Login</a></li>
+    </ul>
+   </nav>
+    <div>
+        <table class="corpo">
+            <tr>
+                <td style="width:30%" class="corpo">
+                        <h2>Selecione Ocorrência</h2>
+                        <h3>Busca Geral:</h3>
+                            <table>
+                                <tr><td>
+                                    <label for="rodovia">Selecione a Rodovia:</label>
+                                </td><td>
+                                    <select name="rodovia" id="rodovia">
+                                        <option value="" disabled selected>Selecione</option>
+                                        <option value="br116">BR-116</option>
+                                        <option value="br153">BR-153</option>
+                                        <option value="br158">BR-158</option>
+                                    </select>
+                                </td></tr>
+                                <tr><td>
+                                    <label for="dIni">Selecione a data inicial:</label>
+                                </td><td>
+                                    <input type="date" name="dIni" id="dIni">
+                                </td></tr>
+                                <tr><td>
+                                    <label for="dFin">Selecione a data final:</label>
+                                </td><td>
+                                    <input type="date" name="dFin" id="dFin">
+                                </td></tr>
+                                <tr>
+                                    <td><button onclick="buscaSemID()">Buscar</button>
+                                    <button onclick="limpar()">Limpar</button></td>
+                                </tr>  
+
+                        </table>
+                        <hr>
+                        <h3>Busca por ID:</h3>
+                        <form action="" method="get">
+                        <label for="idBusca">Digite o ID:</label>
+                        <input type="text" name="idBusca" id="idBusca" required> 
+                        <button onclick="buscaByID()">Buscar</button>
+                        </form>
+                        <button onclick="getAmbulancia()">Chama o bombeiro</button>
+                </td>
+                <td rowspan="2">
+                </td>
+            </tr>
+            <tr>
+                <td style="width:30%">
+                    <hr>
+                    <h2>Estatísticas:</h2>
+                    <div id = 'estatisticas'></div>
+                    <p style="text-align: right;"><a href="estatisticas.html">mais estatisticas...</a></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div id="busca">
+        <h3>Dados de busca</h3>
+    </div>
+</body>
+</html>
