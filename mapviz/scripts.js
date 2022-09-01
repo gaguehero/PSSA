@@ -16,7 +16,8 @@ pointsForJson.forEach(function(lngLat) {
     L.marker(lngLatToLatLng(lngLat)).addTo(map);
   });
 
-var polyline = L.polyline(lngLatArrayToLatLng(pointsForJson)).addTo(map);  
+var polyline = new L.polyline(lngLatArrayToLatLng(pointsForJson), {color: 'cyan'});
+polyline.addTo(map);  
 
 let layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 map.addLayer(layer);
