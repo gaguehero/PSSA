@@ -7,9 +7,35 @@ from psycopg2.extras import RealDictCursor
 from flask import Flask, jsonify, render_template, url_for, request
 app = Flask(__name__)
 @app.route('/')
+@app.route('/index.html')
 def home_page():
     example_embed='This string is from python'
     return render_template('index.html', embed=example_embed)
+
+@app.route('/cadastrarOco.html')
+def oco_page():
+    example_embed='This string is from python'
+    return render_template('cadastrarOco.html', embed=example_embed)
+
+@app.route('/estatisticas.html')
+def stats_page():
+    example_embed='This string is from python'
+    return render_template('estatisticas.html', embed=example_embed)
+
+@app.route('/login.html')
+def login_page():
+    example_embed='This string is from python'
+    return render_template('login.html', embed=example_embed)
+
+@app.route('/register.html')
+def register_page():
+    example_embed='This string is from python'
+    return render_template('register.html', embed=example_embed)
+
+@app.route('/sobre.html')
+def about_page():
+    example_embed='This string is from python'
+    return render_template('sobre.html', embed=example_embed)
 
 @app.route('/test', methods=['GET', 'POST'])
 def index():
