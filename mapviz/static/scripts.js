@@ -44,17 +44,37 @@ function getAmbulancia(){
   //console.log(data)
   fetch(url,{"method":"POST","body":data}).then(r=>r.json()).then(d=>{
     console.log(d)
+    var nomes = [d[0].nome, 'Acidente', d[1][0].nome]
     pointsForJson = [
       [parseFloat(d[0].longeopoint),parseFloat(d[0].latgeopoint)],
       [-49.1992531000,-25.3812036000],
       [d[1][0].lng,d[1][0].lat]
     ]
+    var ab = [
+      [parseFloat(d[0].longeopoint),parseFloat(d[0].latgeopoint)],
+      [-49.1992531000,-25.3812036000]
+    ]
+
+    var bc = [
+      [-49.1992531000,-25.3812036000],
+      [d[1][0].lng,d[1][0].lat]
+    ]
+
     console.log(pointsForJson)
+    i=-1;
     pointsForJson.forEach(function(lngLat) {
-      L.marker(lngLatToLatLng(lngLat)).addTo(map);
+      i=i+1;
+      L.marker(lngLatToLatLng(lngLat)).bindTooltip(nomes[i], 
+      {
+          permanent: true, 
+          direction: 'right'
+      }
+  ).addTo(map);
     })
-    var polyline = new L.polyline(lngLatArrayToLatLng(pointsForJson), {color: 'cyan'});
-    polyline.addTo(map)
+    var polyline1 = new L.polyline(lngLatArrayToLatLng(ab), {color: 'red'});
+    polyline1.addTo(map)
+    var polyline2 = new L.polyline(lngLatArrayToLatLng(bc), {color: 'blue'});
+    polyline2.addTo(map)
 
     map.fitBounds(polyline.getBounds())
 
