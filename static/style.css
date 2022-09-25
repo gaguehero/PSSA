@@ -5,6 +5,7 @@ ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    text-align: justify;
     overflow: hidden;
     background-color: #8c52ff;
 }
@@ -23,11 +24,18 @@ li a {
     padding: 14px 16px;
     text-decoration: none;
 }
-
+li .logo{
+    padding: 0%;
+}
+li .actual{
+    background-color: #333;
+}
 /* Change the link color to #111 (black) on hover */
 li a:hover {
     background-color: #333;
 }
+
+
 #cadastrarOcorrencia{
     visibility: hidden;
 }

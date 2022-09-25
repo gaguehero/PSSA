@@ -1,41 +1,24 @@
 import json
+import os
 import psycopg2
 from decimal import *
 from psycopg2.extras import RealDictCursor
-
-
 from flask import Flask, jsonify, render_template, url_for, request
 app = Flask(__name__)
+
+IMG_FOLDER = os.path.join('static', 'imgs')
+app.config['UPLOAD_FOLDER'] = IMG_FOLDER
+
+
 @app.route('/')
 @app.route('/index.html')
 def home_page():
     example_embed='This string is from python'
     return render_template('index.html', embed=example_embed)
 
-@app.route('/cadastrarOco.html')
-def oco_page():
-    example_embed='This string is from python'
-    return render_template('cadastrarOco.html', embed=example_embed)
-
-@app.route('/estatisticas.html')
-def stats_page():
-    example_embed='This string is from python'
-    return render_template('estatisticas.html', embed=example_embed)
-
-@app.route('/login.html')
-def login_page():
-    example_embed='This string is from python'
-    return render_template('login.html', embed=example_embed)
-
-@app.route('/register.html')
-def register_page():
-    example_embed='This string is from python'
-    return render_template('register.html', embed=example_embed)
-
-@app.route('/sobre.html')
-def about_page():
-    example_embed='This string is from python'
-    return render_template('sobre.html', embed=example_embed)
+@app.route('/visualize')
+def visualizer():
+    return render_template('visualize.html')
 
 @app.route('/test', methods=['GET', 'POST'])
 def index():
@@ -96,7 +79,7 @@ def encontraHeliporto(posX,posY):
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     sqlQuery = '''select crm ,nome, lat, lng, A.geom <-> 'SRID=29193;POINT('''+ posX + posY +''')'::geometry as dist, st_AsEWKT(geom)
-from trabalhos.jeferson_hospitais A order by dist limit 1'''
+    from trabalhos.jeferson_hospitais A order by dist limit 1'''
 
 
     #Executing an MYSQL function using the execute() method
@@ -111,6 +94,34 @@ from trabalhos.jeferson_hospitais A order by dist limit 1'''
     #return json.dumps(data, indent=2, cls=DecimalEncoder)
     return data
 
+@app.route('/getDistance', methods=['GET','POST'])
+def getDistance():
+    if request.method == 'POST':
+        queryData = []
+        point1 = [request.form.get('x1'),request.form.get('y1')]
+        point2 = [request.form.get('x2'),request.form.get('y2')]
+
+        conn = psycopg2.connect(
+        database="postgiscwb", 
+        user='postread', 
+        password='PostRead', 
+        host='localhost', 
+        port= '5435')
+        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        sqlQuery = '''
+            SELECT ST_Distance(
+            ST_Transform('SRID=29193;POINT('''+point1[0]+point1[1]+''')'::geometry, 3857),
+            ST_Transform('SRID=29193;POINT('''+point2[0]+point2[1]+''')'::geometry, 3857) );
+        '''
+        cursor.execute(sqlQuery)
+
+        # Fetch a single row using fetchone() method.
+        data = cursor.fetchone()
+        print("Result of the query: ",data)
+
+        #Closing the connection
+        conn.close()
+        return json.dumps(data, indent=2, cls=DecimalEncoder)
 
 if __name__ == "__main__":
   app.run(debug=True)
