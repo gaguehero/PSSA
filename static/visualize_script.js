@@ -98,8 +98,8 @@ function getAmbulancia(){
       let acidente = new L.Marker([pontos[2].lat,pontos[2].lng],markerOptions).bindTooltip(
         pontos[2].endereco,{permanent:true,direction:'right'}).addTo(active_polyline)
       
-      drawLine(pontos[0],pontos[2],'blue',pontos[0].distancia, active_polyline, "yes")
-      dist = drawLine(pontos[2],pontos[1],'red',pontos[1].distancia, active_polyline, "yes") 
+      distha = drawLine(pontos[0],pontos[2],'blue',pontos[0].distancia, active_polyline, "yes")
+      distah = drawLine(pontos[2],pontos[1],'red',pontos[1].distancia, active_polyline, "yes") 
       drawCurvedLine(pontos[1],pontos[0],'green',pontos[1].distancia, active_polyline) 
       
       document.getElementById('busca').innerHTML = "<h2 id='h2viagem'>Dados da Viagem de Ida</h2>"+
@@ -112,11 +112,11 @@ function getAmbulancia(){
       "<label for='selTrajetoVolta'>Volta</label></form>"+
       "<p><b>Código OACI:</b> "+pontos[1].codigo_oaci+"</p>"+
       "<p><b>Nome do Hospital:</b> "+pontos[1].nome+"</p>"+
-      "<p><b>Distância: Acidente - Hospital:</b> "+dist+"m</p>" +
+      "<p><b>Distância: Acidente - Hospital:</b> "+distah+"m</p>" +
       "<p><b>Altitude do Hospital:</b> "+pontos[1].altitude+"m</p>"+
       "<p><b>CRM do Socorrista:</b> "+pontos[0].crm+"</p>"+
       "<p><b>Endereço do Acidente:</b> "+pontos[2].endereco+"m</p>" +
-      "<p><b>Distancia Heliporto - Acidente:</b> "+pontos[0].distancia+"m</p>"
+      "<p><b>Distancia Heliporto - Acidente:</b> "+distha+"m</p>"
       const selectForm = document.getElementById('selTrajeto')
 
       //Modificar os dados laterais
