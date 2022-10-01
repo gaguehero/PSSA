@@ -15,138 +15,123 @@ function startMap(){
     layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
     map.addLayer(layer);
 }
-
-function lngLatArrayToLatLng(lngLatArray) {
-    return lngLatArray.map(lngLatToLatLng);
-}
-  
-function lngLatToLatLng(lngLat) {
-    return [lngLat[1], lngLat[0]];
-}
   
 function getAmbulancia(){
-    let url = "http://127.0.0.1:5000/test"  
-    //console.log(data)
-    fetch(url,{"method":"POST","body":data}).then(r=>r.json()).then(d=>{
-      //console.log(d)
-      var nomes = [d[0].nome, 'Acidente', d[1][0].nome]
-      pointsForJson = [
-        [parseFloat(d[0].longeopoint),parseFloat(d[0].latgeopoint)],
-        [-49.1992531000,-25.3812036000],
-        [d[1][0].lng,d[1][0].lat]
+  //Endereço do acidente
+  var geocodeService = L.esri.Geocoding.geocodeService({apikey: chave})
+  geocodeService.reverse().latlng([-25.3812036000,-49.1992531000]).run(function (error, result)
+  {
+    if (error) 
+    {
+      return;
+    }
+    acidentSite = result.address.Match_addr
+  })
+
+  let url = "http://127.0.0.1:5000/test"  
+  fetch(url,{"method":"POST","body":data}).then(r=>r.json()).then(d=>{
+
+      //Recebe os 3 pontos
+      pontos = 
+      [
+        {
+          'type': 'Heliporto',
+          'nome': d[1][0].nome,
+          'lat': d[1][0].lat,
+          'lng':d[1][0].lng,
+          'distancia':(d[1][0].dist*100000).toFixed(2),
+          'crm':d[1][0].crm
+        },
+        {
+          'type':'Hospital',
+          'nome':d[0].nome,
+          'lat':parseFloat(d[0].latgeopoint),
+          'lng':parseFloat(d[0].longeopoint),
+          'distancia':(d[0].dist*100000).toFixed(2),
+          'altitude':d[0].altitude,
+          'codigo_oaci':d[0].codigo_oaci
+        },
+        {
+          'type':'Acidente',
+          'endereco': acidentSite,
+          'lat': -25.3812036000,
+          'lng': -49.1992531000
+        }
       ]
-      var ab = [
-        [parseFloat(d[0].longeopoint),parseFloat(d[0].latgeopoint)],
-        [-49.1992531000,-25.3812036000]
-      ]
-  
-      var bc = [
-        [-49.1992531000,-25.3812036000],
-        [d[1][0].lng,d[1][0].lat]
-      ]
-      estatisticas.push(d[0].codigo_oaci)
-      estatisticas.push(d[0].altitude)
-      estatisticas.push(d[1][0].crm)
-      console.log(pointsForJson)
-      i=-1;
-      var geocodeService = L.esri.Geocoding.geocodeService({
-        apikey: chave
-      });
+
       //Colocando os 3 pontos no mapa
       let customIcon = {
         iconUrl:"/static/imgs/helicopter.png",
-        iconSize:[30,30]
+        iconSize:[40,40]
        }
       let myIcon = L.icon(customIcon)
-
-      
       let markerOptions = {
         icon:myIcon,
-        title:nomes[2]
+        title:pontos[0].nome
       }
-      let helicopter = new L.Marker(lngLatToLatLng(pointsForJson[2]),markerOptions)
+      let helicopter = new L.Marker([pontos[0].lat,pontos[0].lng],markerOptions).addTo(map)
+
 
       customIcon = {
         iconUrl:"/static/imgs/hospital-building.png",
-        iconSize:[30,30]
+        iconSize:[40,40]
        }
       myIcon = L.icon(customIcon)
       markerOptions = {
         icon:myIcon,
-        title:nomes[0]
+        title:pontos[1].nome
       }
-      let hospital =  new L.Marker(lngLatToLatLng(pointsForJson[0]),markerOptions)
-
-      geocodeService.reverse().latlng(lngLatToLatLng(pointsForJson[1])).run(function (error, result){
-        if (error) {
-          return;
-        }
-        customIcon = {
-          iconUrl:"/static/imgs/car-accident.png",
-          iconSize:[30,30]
-        }
-        myIcon = L.icon(customIcon)
-        markerOptions={
-          icon:myIcon,
-          title:'Local do Acidente'
-        }
-        let acidente = new L.Marker(lngLatToLatLng(pointsForJson[1]),markerOptions).bindTooltip(result.address.Match_addr, 
-          {
-            permanent: true, 
-            direction: 'right'
-          }).addTo(map)
-      })
+      let hospital =  new L.Marker([pontos[1].lat,pontos[1].lng],markerOptions).addTo(map)
 
 
-      url = "http://127.0.0.1:5000/getDistance"
-      let points = new FormData()
-      points.append('y1',pointsForJson[1][1])
-      points.append('x1',pointsForJson[1][0])
-      points.append('y2',pointsForJson[2][1])
-      points.append('x2',pointsForJson[2][0])
-      fetch(url,{"method":"POST","body":points}).then(r=>r.json()).then(d=>
-      {
-        console.log(d.st_distance)
-        let legenda = (d.st_distance*10000).toFixed(2).toString()
-        estatisticas.push(legenda)
-        console.log(legenda)
-        var polyline = new L.polyline(lngLatArrayToLatLng(bc), {color: 'blue'});
-        polyline.bindTooltip(legenda, 
-        {
-          permanent: true, 
-          direction: 'right'
-        }).addTo(map)
-        points = new FormData()
-      points.append('y1',pointsForJson[1][1])
-      points.append('x1',pointsForJson[1][0])
-      points.append('y2',pointsForJson[0][1])
-      points.append('x2',pointsForJson[0][0])
-      fetch(url,{"method":"POST","body":points}).then(r=>r.json()).then(d=>
-      {
-        console.log(d.st_distance)
-        let legenda = (d.st_distance*10000).toFixed(2).toString()
-        estatisticas.push(legenda)
-        console.log(legenda)
-        var polyline = new L.polyline(lngLatArrayToLatLng(ab), {color: 'red'});
-        polyline.bindTooltip(legenda, 
-        {
-          permanent: true, 
-          direction: 'right'
-        }).addTo(map)
-        map.fitBounds(polyline.getBounds())
-        console.log(estatisticas)
-        let distancia = parseFloat(estatisticas[3])+parseFloat(estatisticas[4])
-        document.getElementById('busca').innerHTML = "<h2>Dados da Busca</h2>"+
-        "<p><b>Código OACI:</b> "+estatisticas[0]+"</p>"+
-        "<p><b>Nome do Hospital:</b> "+nomes[0]+"</p>"+
-        "<p><b>Altitude do Hospital:</b> "+estatisticas[1]+"m</p>"+
-        "<p><b>CRM do Socorrista:</b> "+estatisticas[2]+"</p>"+
-        "<p><b>Distancia percorrida:</b> "+distancia+"m</p>"
-      })
-      })
+      customIcon ={
+        iconUrl:"/static/imgs/car-accident.png",
+        iconSize:[40,40]
+      }
+      myIcon = L.icon(customIcon)
+      markerOptions = {
+        icon:myIcon,
+        title:pontos[2].type
+      }
+      let acidente = new L.Marker([pontos[2].lat,pontos[2].lng],markerOptions).bindTooltip(
+        pontos[2].endereco,{permanent:true,direction:'right'}).addTo(map)
+
+
+      drawLine(pontos[0],pontos[2],'blue',pontos[0].distancia)
+      drawLine(pontos[2],pontos[1],'red',pontos[1].distancia)
       
-      hospital.addTo(map)
-      helicopter.addTo(map)     
-    })
-    
+      document.getElementById('busca').innerHTML = "<h2 id='h2viagem'>Dados da Viagem de Ida</h2>"+
+      "<p> Selecione o trajeto a ser representado:<p>"+
+      "<form id=selTrajeto><input type='radio' id='selTrajetoIda' name='selTrajeto' value='ida' checked>"+
+      "<label for='selTrajetoIda'>Ida</label>"+
+      "<input type='radio' id='selTrajetoVolta' name='selTrajeto' value='volta'>"+
+      "<label for='selTrajetoVolta'>Volta</label></form>"+
+      "<p><b>Código OACI:</b> "+pontos[1].codigo_oaci+"</p>"+
+      "<p><b>Nome do Hospital:</b> "+pontos[1].nome+"</p>"+
+      "<p><b>Distância: Acidente - Hospital:</b> "+pontos[1].distancia+"m</p>" +
+      "<p><b>Altitude do Hospital:</b> "+pontos[1].altitude+"m</p>"+
+      "<p><b>CRM do Socorrista:</b> "+pontos[0].crm+"</p>"+
+      "<p><b>Endereço do Acidente:</b> "+pontos[2].endereco+"m</p>" +
+      "<p><b>Distancia Heliporto - Acidente:</b> "+pontos[0].distancia+"m</p>"
+      const selectForm = document.getElementById('selTrajeto')
+
+      //Modificar os dados laterais
+      selectForm.addEventListener('change',(event)=>{
+        //alert('Teste')
+        let trajetoValue = event.target.value
+        console.log(trajetoValue)
+
+      })
+      })    
+}
+
+function drawLine(saida, chegada, color,dist){
+  var polylinePoints = [
+    [saida.lat, saida.lng],
+    [chegada.lat, chegada.lng]
+  ];            
+  var polyline = L.polyline(polylinePoints, {color: color})
+  polyline.bindTooltip(dist.toString(), {permanent: true, direction: 'right'}).addTo(map)
+
+  map.fitBounds(polyline.getBounds())
 }
