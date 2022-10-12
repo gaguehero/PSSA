@@ -4,7 +4,7 @@ mapOptions = {
     zoom:12
 }
 var estatisticas = []
-
+const VELOCIDADE = 50
 
 data = new FormData()
 data.append('y','-25.3812036000')
@@ -99,10 +99,13 @@ function getAmbulancia(){
         pontos[2].endereco,{permanent:true,direction:'right'}).addTo(active_polyline)
       
       distha = drawLine(pontos[0],pontos[2],'blue',pontos[0].distancia, active_polyline, "yes")
-      distah = drawLine(pontos[2],pontos[1],'red',pontos[1].distancia, active_polyline, "yes") 
+      let timeHa = distha/VELOCIDADE 
+      distah = drawLine(pontos[2],pontos[1],'red',pontos[1].distancia, active_polyline, "yes")
+      let timeAh = distah/VELOCIDADE 
       drawCurvedLine(pontos[1],pontos[0],'green',pontos[1].distancia, active_polyline) 
-      
-      document.getElementById('busca').innerHTML = "<h2 id='h2viagem'>Dados da Viagem de Ida</h2>"+
+      let timeReturn = timeAh+timeHa
+      let distanciaIda = distha+distah
+      document.getElementById('busca').innerHTML = "<h2 id='h2viagem'>Dados da Viagem</h2>"+
       "<p> Selecione o trajeto a ser representado:<p>"+
       "<form id=selTrajeto><input type='radio' id='selTrajetoIdaVolta' name='selTrajeto' value='idaevolta' checked>"+
       "<label for='selTrajetoIdaVolta'>Ida e Volta</label>"+
@@ -110,13 +113,22 @@ function getAmbulancia(){
       "<label for='selTrajetoIda'>Ida</label>"+
       "<input type='radio' id='selTrajetoVolta' name='selTrajeto' value='volta'>"+
       "<label for='selTrajetoVolta'>Volta</label></form>"+
+
+      "<p><b>CRM do Socorrista:</b> "+pontos[0].crm+"</p>"+
+
+      "<p><b>Endereço do Acidente:</b> "+pontos[2].endereco+"m</p>"+
+      "<p><b>Distancia Heliporto - Acidente:</b> "+distha+"m</p>"+
+      "<p><b>Tempo Heliporto - Acidente:</b> "+timeHa.toFixed(2)+"s</p>"+
+
       "<p><b>Código OACI:</b> "+pontos[1].codigo_oaci+"</p>"+
       "<p><b>Nome do Hospital:</b> "+pontos[1].nome+"</p>"+
       "<p><b>Distância: Acidente - Hospital:</b> "+distah+"m</p>" +
+      "<p><b>Tempo: Acidente - Hospital:</b> "+timeAh.toFixed(2)+"s</p>" +
       "<p><b>Altitude do Hospital:</b> "+pontos[1].altitude+"m</p>"+
-      "<p><b>CRM do Socorrista:</b> "+pontos[0].crm+"</p>"+
-      "<p><b>Endereço do Acidente:</b> "+pontos[2].endereco+"m</p>" +
-      "<p><b>Distancia Heliporto - Acidente:</b> "+distha+"m</p>"
+
+      "<h3><b>Distância Total:</b> "+(distanciaIda*2)+"m</h3>" +
+      "<h3><b>Tempo Total:</b> "+(timeReturn*2).toFixed(2)+"s</h3>" 
+
       const selectForm = document.getElementById('selTrajeto')
 
       //Modificar os dados laterais
@@ -142,8 +154,8 @@ function drawLine(saida, chegada, color,dist,layer,bounds){
     [saida.lat, saida.lng],
     [chegada.lat, chegada.lng]
   ];
-  dist = distance(saida.lat, chegada.lat, saida.lng, chegada.lng)*1000
-  dist = Math.round(dist)
+  dist = (distance(saida.lat, chegada.lat, saida.lng, chegada.lng)*1000).toFixed(2)
+  //dist = Math.round(dist)
   var polyline = L.polyline(polylinePoints, {color: color})
   polyline.bindTooltip(dist.toString()+" m", {permanent: true, direction: 'right'}).addTo(layer)
   if(bounds == "yes")
