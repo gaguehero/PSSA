@@ -7,8 +7,8 @@ var estatisticas = []
 const VELOCIDADE = 50
 
 data = new FormData()
-data.append('y','-25.3812036000')
 data.append('x','-49.1992531000')
+data.append('y','-25.3812036000')
 
 function startMap(){
     map = new L.map('map' , mapOptions);
