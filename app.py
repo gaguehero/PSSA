@@ -43,6 +43,8 @@ def findHeliport():
     queryData.append(encontraHeliport(posX,posY)) 
     return queryData
 
+
+
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         # 👇️ if passed in object is instance of Decimal
@@ -66,7 +68,7 @@ def encontraHeliport(posX,posY):
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     sqlQuery = '''select codigo_oaci,nome, latgeopoint,longeopoint, altitude,largura, superficie, A.the_geom <-> 'SRID=29193;POINT( '''+posX +posY +''')'::geometry AS dist, 
     st_AsEWKT(the_geom) from trabalhos.jeferson_meio_aereo A
-    order by dist limit 3;
+    order by dist limit 6;
     '''
     #Executing an MYSQL function using the execute() method
     cursor.execute(sqlQuery)
