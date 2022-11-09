@@ -8,6 +8,7 @@ const VELOCIDADE = 50
 
 let toggleHelicopter = 1
 let toggleHospital = 1
+var oldSelHeli = ''
 
 var helicopterMarkers = new Array();
 var hospitalMarkers = new Array();
@@ -107,9 +108,11 @@ function getHelicopters(geoAcidente){
             selector.setAttribute('id','sel'+i)
             selector.setAttribute('name','selradioHeliport')
             selector.setAttribute('value',i)
+            selector.setAttribute('onchange','handleSelHeliport('+i+')')
             selectorData.appendChild(selector)
             option.appendChild(selectorData)
-            placeTemporaryMarker(data[i].latgeopoint,data[i].longeopoint,'helicopter')
+
+            placeTemporaryMarker(data[i].latgeopoint,data[i].longeopoint,'helicopter',data[i].nome)
             map.addLayer(helicopterMarkers[i])
 
             let nome = document.createElement('td')
@@ -134,13 +137,42 @@ function getHelicopters(geoAcidente){
 
 }
 
+function handleSelHeliport(number){
+    //map.removeLayer(helicopterMarkers[number])
+    let customIcon = {
+        iconUrl:"/static/imgs/helicopter.png",
+        iconSize:[40,40]
+       }
+    let newIcon = L.icon(customIcon)
+    helicopterMarkers[number].setIcon(newIcon)
+    if(oldSelHeli!==''){
+        customIcon = {
+            iconUrl:"/static/imgs/unsel_helicopter.png",
+            iconSize:[40,40]
+        }
+        newIcon = L.icon(customIcon)
+        helicopterMarkers[oldSelHeli].setIcon(newIcon)
+        console.log('teste')
+    }
+    oldSelHeli = number
+}
+
 function getHospitals(geoAcidente){
 
 }
 
-function placeTemporaryMarker(lat,long,type){
+function placeTemporaryMarker(lat,long,type,name){
     if(type =='helicopter'){
-        var tempMarker = new L.marker([lat, long]);
+        let customIcon ={
+            iconUrl:"/static/imgs/unsel_helicopter.png",
+            iconSize:[40,40]
+          }
+        let myIcon = L.icon(customIcon)
+        let markerOptions = {
+            icon:myIcon,
+            title:name
+        }
+        var tempMarker = new L.marker([lat, long],markerOptions);
         helicopterMarkers.push(tempMarker)
     }
 }
