@@ -43,7 +43,13 @@ def findHeliport():
     queryData.append(encontraHeliport(posX,posY)) 
     return queryData
 
-
+@app.route('/hospital', methods=['GET','POST'])
+def findHospital():
+    queryData = []
+    posX = request.form.get("x")
+    posY = request.form.get("y")
+    queryData.append(encontraHospital(posX,posY)) 
+    return queryData
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -70,6 +76,29 @@ def encontraHeliport(posX,posY):
     st_AsEWKT(the_geom) from trabalhos.jeferson_meio_aereo A
     order by dist limit 6;
     '''
+    #Executing an MYSQL function using the execute() method
+    cursor.execute(sqlQuery)
+    # Fetch a single row using fetchone() method.
+    data = cursor.fetchall()
+    print("Result of the query: ",data)
+
+    #Closing the connection
+    conn.close()
+    return data
+
+def encontraHospital(posX,posY):
+#establishing the connection
+    conn = psycopg2.connect(
+        database="postgiscwb", 
+        user='postread', 
+        password='PostRead', 
+        host='localhost', 
+        port= '5435'
+    )
+    #Creating a cursor object using the cursor() method
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    sqlQuery = '''select crm ,nome, lat, lng, A.geom <-> 'SRID=29193;POINT('''+ posX + posY +''')'::geometry as dist, st_AsEWKT(geom)
+    from trabalhos.jeferson_hospitais A order by dist limit 6'''
     #Executing an MYSQL function using the execute() method
     cursor.execute(sqlQuery)
     # Fetch a single row using fetchone() method.

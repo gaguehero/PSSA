@@ -92,3 +92,6 @@ span.gaveta{
     height: 45%;
     width: 33%;
 }
+#traceRoute{
+    display: none;
+}
