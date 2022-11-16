@@ -10,6 +10,9 @@ let toggleHelicopter = 1
 let toggleHospital = 1
 var oldSelHeli = ''
 var oldSelHosp = ''
+var codigo_oaci = new Array();
+var codigo_crm = new Array();
+
 
 var helicopterMarkers = new Array();
 var hospitalMarkers = new Array();
@@ -49,6 +52,24 @@ function searchAddress(){
         acidente = new L.Marker(geoAcidente,markerOptions).addTo(map)
         getHelicopters(geoAcidente)
         getHospitals(geoAcidente)
+    })
+}
+
+function postOccurence(id_ocorrencia, id_acidente, id_plano_voo, oacipass, crmpass, data_hora, cod_medico, cod_amb_area){
+    helicopterMarkers.length = 0
+    let url = "http://127.0.0.1:5000/ocorrencia"  
+    data = new FormData()
+    data.append('id_ocorrencia', id_ocorrencia)
+    data.append('id_acidente', id_acidente)
+    data.append('id_plano_voo', id_plano_voo)
+    data.append('codigo_oaci', oacipass)
+    data.append('crm', crmpass)
+    data.append('data_hora', data_hora)
+    data.append('cod_medico',cod_medico)
+    data.append('cod_amb_geral',cod_amb_area)
+    fetch(url,{"method":"POST","body":data}).then(r=>r.json()).then(d=>{
+        let data = d[0]
+        console.log(data)
     })
 }
 
@@ -126,6 +147,7 @@ function getHelicopters(geoAcidente){
             let oaci = document.createElement('td')
             oaci.innerText = data[i].codigo_oaci
             option.appendChild(oaci)
+            codigo_oaci.push(data[i].codigo_oaci)
 
             let distancia = document.createElement('td')
             distMeters = distance(geoAcidente[0],data[i].latgeopoint,geoAcidente[1],data[i].longeopoint)
@@ -238,6 +260,7 @@ function getHospitals(geoAcidente){
             let crm = document.createElement('td')
             crm.innerText = data[i].crm
             option.appendChild(crm)
+            codigo_crm.push(data[i].crm)
 
             let distancia = document.createElement('td')
             distMeters = distance(geoAcidente[0],data[i].lat,geoAcidente[1],data[i].lng)
@@ -380,18 +403,22 @@ function distance(lat1,
 
   function traceRoute(){
     let routeArray = ['','','']
+    let crmpass = ''
+    let oacipass = ''
     routeArray[1] = acidente.getLatLng()
     for(let i = 0;i<helicopterMarkers.length;i++){
         let selector = document.getElementById('heliSel'+i)
-        if(selector.classList.contains('selected'))
-            routeArray[0] = helicopterMarkers[i].getLatLng()
+        if(selector.classList.contains('selected')){
+            oacipass = codigo_oaci[i]
+            routeArray[0] = helicopterMarkers[i].getLatLng()}
     }
     for(let i = 0;i<hospitalMarkers.length;i++){
         let selector = document.getElementById('hospSel'+i)
-        if(selector.classList.contains('selected'))
-            routeArray[2] = hospitalMarkers[i].getLatLng()
+        if(selector.classList.contains('selected')){
+            crmpass = codigo_crm[i]
+            routeArray[2] = hospitalMarkers[i].getLatLng()}
     }
-    //console.log(routeArray)
+    console.log(routeArray)
     var polyline = L.polyline(routeArray, {color: 'red'})
     polyline.addTo(map)
 
@@ -400,4 +427,7 @@ function distance(lat1,
     polyline2.addTo(map)
 
     map.fitBounds(polyline.getBounds())
+    data = new Date()
+    datapass = data.getDate()+'/'+data.getMonth()+'/'+data.getFullYear()+' '+data.getHours()+':'+data.getMinutes()
+    postOccurence(1,"72201",1,oacipass,crmpass,datapass,"test","test")
   }

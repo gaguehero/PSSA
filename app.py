@@ -51,6 +51,20 @@ def findHospital():
     queryData.append(encontraHospital(posX,posY)) 
     return queryData
 
+@app.route('/ocorrencia', methods=['GET','POST'])
+def postOcorrencia():
+    queryData = []
+    id_ocorrencia = request.form.get("id_ocorrencia")
+    id_acidente = request.form.get("id_acidente")
+    codigo_oaci = request.form.get("codigo_oaci")
+    id_plano_voo = request.form.get("id_plano_voo")
+    crm = request.form.get("crm")
+    data_hora = request.form.get("data_hora")
+    cod_medico = request.form.get("cod_medico")
+    cod_amb_aerea = request.form.get("cod_amb_geral")
+    queryData.append(postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, data_hora, cod_medico, cod_amb_aerea)) 
+    return queryData
+
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         # 👇️ if passed in object is instance of Decimal
@@ -108,6 +122,26 @@ def encontraHospital(posX,posY):
     #Closing the connection
     conn.close()
     return data
+
+def postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, data_hora, cod_medico, cod_amb_aerea):
+#establishing the connection
+    conn = psycopg2.connect(
+        database="postgiscwb", 
+        user='postread', 
+        password='PostRead', 
+        host='localhost', 
+        port= '5435'
+    )
+    #Creating a cursor object using the cursor() method
+    cursor = conn.cursor()
+    sqlQuery = "INSERT INTO trabalhos.jeferson_ocorrencias(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, data_hora, cod_medico, codigo_amb_aerea) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (str(id_ocorrencia), str(id_acidente), id_plano_voo, str(codigo_oaci), str(crm), str(data_hora), str(cod_medico), str(cod_amb_aerea))
+    #Executing an MYSQL function using the execute() method
+    cursor.execute(sqlQuery, val)
+    conn.commit()
+
+    #Closing the connection
+    conn.close()
 
 def chamaBulancia(posX,posY):
     #establishing the connection
