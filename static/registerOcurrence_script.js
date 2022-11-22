@@ -16,11 +16,100 @@ var codigo_crm = new Array();
 
 var helicopterMarkers = new Array();
 var hospitalMarkers = new Array();
+var accidentMarkers = new Array();
 
 function startMap(){
     map = new L.map('map' , mapOptions);
     layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
     map.addLayer(layer);
+}
+
+function searchAccident(){
+    let dataSearch = document.getElementById('dia').value
+    let idSearch = document.getElementById('id').value
+    let cidadeSearch = document.getElementById('cidade').value
+    let url = "http://127.0.0.1:5000/accident"
+    data = new FormData()
+    data.append('date',dataSearch)
+    if(idSearch)
+        data.append('id',idSearch)
+    if(cidadeSearch)
+        data.append('cidade',cidadeSearch)
+    fetch(url,{"method":"POST","body":data}).then(r=>r.json()).then(d=>{
+        let data = d[0]
+        console.log(data)
+        
+        let div = document.getElementById('accidentSel')
+        div.innerHTML =''
+
+        let selecioneAc = document.createElement('h2')
+        selecioneAc.innerHTML = "Selecione o acidente"
+        div.appendChild(selecioneAc)
+
+        let tabela = document.createElement('table')
+        tabela.setAttribute('id','optionsAccidentess')
+        div.appendChild(tabela)
+
+        let cabecalho = document.createElement('tr')
+
+        let atributo = document.createElement('th')
+        cabecalho.appendChild(atributo)
+
+        atributo = document.createElement('th')
+        atributo.innerText = 'ID'
+        cabecalho.appendChild(atributo)
+
+        atributo = document.createElement('th')
+        atributo.innerHTML = 'Horário'
+        cabecalho.appendChild(atributo)
+
+        atributo = document.createElement('th')
+        atributo.innerHTML =  'Município'
+        cabecalho.appendChild(atributo)
+        tabela.appendChild(cabecalho)
+
+        atributo = document.createElement('th')
+        atributo.innerHTML =  'Meteorologia'
+        cabecalho.appendChild(atributo)
+        tabela.appendChild(cabecalho)
+
+        for(let i = 0; i<data.length;i++){
+            let option = document.createElement('tr')
+            option.setAttribute('id','accident'+i)
+
+            let selectorData = document.createElement('td')
+            let selector = document.createElement('input')
+            selector.setAttribute('type','radio')
+            selector.setAttribute('id','acciSel'+i)
+            selector.setAttribute('name','selradioAcci')
+            selector.setAttribute('value',i)
+            selector.setAttribute('onchange','handleSelAcci('+i+')')
+            selectorData.appendChild(selector)
+            option.appendChild(selectorData)
+
+            let iconURL = "/static/imgs/unsel_car-accident.png"
+            placeTemporaryMarker(data[i].latitude,data[i].longitude,accidentMarkers,iconURL,data[i].id_acidente)
+
+            let id_acidente = document.createElement('td')
+            id_acidente.innerText = data[i].id_acidente
+            option.appendChild(id_acidente)
+
+            let horario = document.createElement('td')
+            horario.innerText = data[i].horario
+            option.appendChild(horario)
+
+            let municipio = document.createElement('td')
+            municipio.innerText = data[i].municipio.trim()
+            option.appendChild(municipio)
+
+            let meteorologia = document.createElement('td')
+            meteorologia.innerText = data[i].condicao_meteorologica.trim()
+            option.appendChild(meteorologia)
+
+            tabela.appendChild(option)
+
+        }
+    })
 }
 
 function searchAddress(){

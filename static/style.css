@@ -95,3 +95,15 @@ span.gaveta{
 #traceRoute{
     display: none;
 }
+#logoBig{
+    margin: auto;
+    display: block;
+    width: 350px;
+}
+
+button {
+    transition: box-shadow 300ms ease-in-out, color 300ms ease-in-out; 
+  }
+button:hover{
+        box-shadow: 0 0 40px 40px #8c52ff inset;
+}

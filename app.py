@@ -3,15 +3,23 @@ import os
 import psycopg2
 from decimal import *
 from psycopg2.extras import RealDictCursor
+from django.core.serializers.json import DjangoJSONEncoder
+
 from flask import Flask, jsonify, render_template, url_for, request
 app = Flask(__name__)
 
 IMG_FOLDER = os.path.join('static', 'imgs')
 app.config['UPLOAD_FOLDER'] = IMG_FOLDER
 
+database="postgiscwb"
+user='postread' 
+password='PostRead' 
+host='localhost' 
+port= '5435'
+
 
 @app.route('/')
-@app.route('/index.html')
+@app.route('/index')
 def home_page():
     example_embed='This string is from python'
     return render_template('index.html', embed=example_embed)
@@ -24,6 +32,23 @@ def visualizer():
 def register():
     return render_template('registerOcurrence.html')
 
+@app.route('/accident', methods=['GET','POST'])
+def getAccident():
+    queryData = []
+    date = request.form.get('date')
+    cidade = request.form.get('cidade')
+    id = request.form.get('id')
+    if id:
+        print('Buscando com ID de acidente')
+        queryData.append(encontraAcidente(date, id))
+    elif cidade:
+        print('Buscando com cidade e data')
+        queryData.append(encontraAcidente(date,'',cidade))
+    else:
+        print('Buscando com data')
+        queryData.append(encontraAcidente(date))
+    return json.dumps(queryData, indent=2, cls=DjangoJSONEncoder)
+
 @app.route('/test', methods=['GET', 'POST'])
 def index():
   if request.method == 'POST':
@@ -33,7 +58,7 @@ def index():
     print("X "+posX +" Y "+ posY)
     queryData.append(chamaBulancia(posX,posY))
     queryData.append(encontraHeliporto(posX,posY))
-    return json.dumps(queryData, indent=2, cls=DecimalEncoder)
+    return json.dumps(queryData, indent=2, cls=DecimalEncoder, default=str)
 
 @app.route('/heliport', methods=['GET','POST'])
 def findHeliport():
@@ -74,15 +99,44 @@ class DecimalEncoder(json.JSONEncoder):
         # 👇️ otherwise use the default behavior
         return json.JSONEncoder.default(self, obj)
 
+def encontraAcidente(date, id='',cidade=''):
+    conn = psycopg2.connect(
+        database=database, 
+        user=user, 
+        password=password, 
+        host=host, 
+        port=port
+    )
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    sqlQuery = '''select id_acidente, data_inversa, horario, municipio, tipo_acidente, condicao_meteorologica, pessoas, latitude, longitude
+        from trabalhos.jeferson_acidentes 
+        where'''
+    if id:
+        sqlQuery= sqlQuery + " id_acidente = " + id
+    else:
+        if cidade:
+            sqlQuery = sqlQuery + " municipio = '" + cidade + "' and"
+        sqlQuery = sqlQuery + " data_inversa = '" + date + "'"
+    print(sqlQuery)
+    #Executing an MYSQL function using the execute() method
+    cursor.execute(sqlQuery)
+    # Fetch a single row using fetchone() method.
+    data = cursor.fetchall()
+    print("Result of the query: ",data)
+
+    #Closing the connection
+    conn.close()
+    return data
+
 
 def encontraHeliport(posX,posY):
     #establishing the connection
     conn = psycopg2.connect(
-        database="postgiscwb", 
-        user='postread', 
-        password='PostRead', 
-        host='localhost', 
-        port= '5435'
+        database=database, 
+        user=user, 
+        password=password, 
+        host=host, 
+        port=port
     )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -103,11 +157,11 @@ def encontraHeliport(posX,posY):
 def encontraHospital(posX,posY):
 #establishing the connection
     conn = psycopg2.connect(
-        database="postgiscwb", 
-        user='postread', 
-        password='PostRead', 
-        host='localhost', 
-        port= '5435'
+        database=database, 
+        user=user, 
+        password=password, 
+        host=host, 
+        port=port
     )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -126,11 +180,11 @@ def encontraHospital(posX,posY):
 def postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, data_hora, cod_medico, cod_amb_aerea):
 #establishing the connection
     conn = psycopg2.connect(
-        database="postgiscwb", 
-        user='postread', 
-        password='PostRead', 
-        host='localhost', 
-        port= '5435'
+        database=database, 
+        user=user, 
+        password=password, 
+        host=host, 
+        port=port
     )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor()
@@ -146,11 +200,11 @@ def postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, 
 def chamaBulancia(posX,posY):
     #establishing the connection
     conn = psycopg2.connect(
-        database="postgiscwb", 
-        user='postread', 
-        password='PostRead', 
-        host='localhost', 
-        port= '5435'
+        database=database, 
+        user=user, 
+        password=password, 
+        host=host, 
+        port=port
     )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -173,11 +227,11 @@ def chamaBulancia(posX,posY):
 def encontraHeliporto(posX,posY):
     #establishing the connection
     conn = psycopg2.connect(
-        database="postgiscwb", 
-        user='postread', 
-        password='PostRead', 
-        host='localhost', 
-        port= '5435'
+        database=database, 
+        user=user, 
+        password=password, 
+        host=host, 
+        port=port
     )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -205,11 +259,11 @@ def getDistance():
         point2 = [request.form.get('x2'),request.form.get('y2')]
 
         conn = psycopg2.connect(
-        database="postgiscwb", 
-        user='postread', 
-        password='PostRead', 
-        host='localhost', 
-        port= '5435')
+        database=database, 
+        user=user, 
+        password=password, 
+        host=host, 
+        port=port)
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         sqlQuery = '''
             SELECT ST_Distance(
