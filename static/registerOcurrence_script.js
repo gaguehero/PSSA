@@ -10,8 +10,10 @@ let toggleHelicopter = 1
 let toggleHospital = 1
 var oldSelHeli = ''
 var oldSelHosp = ''
+var oldSelAcc = ''
 var codigo_oaci = new Array();
 var codigo_crm = new Array();
+var geoAcidente = []
 
 
 var helicopterMarkers = new Array();
@@ -111,6 +113,43 @@ function searchAccident(){
         }
     })
 }
+function selectAcc(){
+    for(let i = 0;i<accidentMarkers.length;i++){
+        let selector = document.getElementById('acciSel'+i)
+        if(selector.classList.contains('selected')){
+            geoAcidente = accidentMarkers[i].getLatLng()
+        }
+    }
+    var acc = [geoAcidente['lat'], geoAcidente['lng']]
+    console.log(acc)
+    getHelicopters(acc)
+    getHospitals(acc)
+}
+
+function handleSelAcci(number){
+    //map.removeLayer(helicopterMarkers[number])
+    let customIcon = {
+        iconUrl:"/static/imgs/car-accident.png",
+        iconSize:[40,40]
+       }
+    
+    let newIcon = L.icon(customIcon)
+    accidentMarkers[number].setIcon(newIcon)
+    let selector = document.getElementById("acciSel"+number)
+    selector.classList.add("selected");
+
+    if(oldSelAcc!==''){
+        customIcon = {
+            iconUrl:"/static/imgs/unsel_car-accident.png",
+            iconSize:[40,40]
+        }
+        newIcon = L.icon(customIcon)
+        accidentMarkers[oldSelAcc].setIcon(newIcon)
+        selector = document.getElementById('hospSel'+oldSelAcc)
+        selector.classList.remove("selected")
+    }
+    oldSelAcc = number
+}
 
 function searchAddress(){
     let enderecoSearch = document.getElementById('endereco').value
@@ -161,6 +200,8 @@ function postOccurence(id_ocorrencia, id_acidente, id_plano_voo, oacipass, crmpa
         console.log(data)
     })
 }
+
+
 
 function getHelicopters(geoAcidente){
     helicopterMarkers.length = 0
@@ -401,8 +442,10 @@ function placeTemporaryMarker(lat,long,array,iconURL,name){
         icon:myIcon,
         title:name
     }
-    console.log(typeof(lat), typeof(long))
-    var tempMarker = new L.marker([lat, long],markerOptions);
+    lat = parseFloat(lat)
+    long = parseFloat(long)
+    console.log(lat, long)
+    var tempMarker = new L.marker([lat, long],markerOptions).addTo(map);
     array.push(tempMarker)
     
 }
