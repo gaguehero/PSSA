@@ -40,7 +40,7 @@ function getAmbulancia(){
           'lat': d[1][0].lat,
           'lng':d[1][0].lng,
           'distancia':(d[1][0].dist*100000).toFixed(2),
-          'crm':d[1][0].crm
+          'cnpj':d[1][0].cnpj
         },
         {
           'type':'Hospital',
@@ -114,7 +114,7 @@ function getAmbulancia(){
       "<input type='radio' id='selTrajetoVolta' name='selTrajeto' value='volta'>"+
       "<label for='selTrajetoVolta'>Volta</label></form>"+
 
-      "<p><b>CRM do Socorrista:</b> "+pontos[0].crm+"</p>"+
+      "<p><b>cnpj do Socorrista:</b> "+pontos[0].cnpj+"</p>"+
 
       "<p><b>Endereço do Acidente:</b> "+pontos[2].endereco+"m</p>"+
       "<p><b>Distancia Heliporto - Acidente:</b> "+distha+"m</p>"+

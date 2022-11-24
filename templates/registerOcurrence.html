@@ -30,13 +30,12 @@
     </ul>
    </nav>
    <div id="map"></div>
-    <div>
+    <div style="width:30%">
+        <h2>Digite o Local do Acidente</h2>
         <table class="corpo">
             <tr>
-                <td style="width:30%" class="corpo">
-                       <h2>
-                        Digite o Local do Acidente
-                       </h2>
+                <td  class="corpo">
+                       
                        <table>
                         <tr>
                             <td><label for="dia">Dia do Acidente:</label></td>
@@ -47,30 +46,22 @@
                             <td><input type="text" name="id" id="id"></td>
                         </tr>
                         <tr>
-                            <td><label for="cidade">Cidade:</label></td>
-                            <td><input type="text" name="cidade" id="cidade" value="Curitiba"></td>
-                        </tr>
-                        <tr>
                             <td></td>
                             <td align="right"><button onclick="searchAccident()">busca</button></td>
                         </tr>
+
                        </table> 
                 </td>
                 <td rowspan="2">
                 </td>
             </tr>
-            <tr>
-                <td style="width:100%">
-                    <hr>
-                    <div id="accidentSel"></div>
-                    <button onclick="selectAcc()" id="selectAcc">Confirmar</button>
-                    <div id="heliportSel"></div>
-                    <div id="hospitalSel"></div>
-                    <button onclick="traceRoute()" id="traceRoute">Registrar Rota</button>
-                </td>
-            </tr>
         </table>
+        <hr>  
     </div>
+    <div id="accidentSel"></div>
+    <div id="heliportSel"></div>
+    <div id="hospitalSel"></div>
+    <button onclick="traceRoute()" id="traceRoute">Registrar Rota</button>
 
 </body>
 </html>
