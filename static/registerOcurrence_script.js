@@ -12,10 +12,11 @@ var oldSelHeli = ''
 var oldSelHosp = ''
 var oldSelAcc = ''
 var codigo_oaci = new Array();
-var codigo_cnpj = new Array();
+var codigo_crm = new Array();
 var id = new Array()
 var selectedId
 var geoAcidente = []
+var occ_id = 1
 
 
 var helicopterMarkers = new Array();
@@ -29,6 +30,7 @@ function startMap(){
 }
 
 function searchAccident(){
+    fetchId()
     let dataSearch = document.getElementById('dia').value
     let idSearch = document.getElementById('id').value
     let url = "http://127.0.0.1:5000/accident"
@@ -179,7 +181,7 @@ function handleSelAcci(number){
 }
 
 
-function postOccurence(id_ocorrencia, id_acidente, id_plano_voo, oacipass, cnpjpass, data_hora, cod_medico, cod_amb_area){
+function postOccurence(id_ocorrencia, id_acidente, id_plano_voo, oacipass, crmpass, data_hora, cod_medico, cod_amb_area){
     helicopterMarkers.length = 0
     let url = "http://127.0.0.1:5000/ocorrencia"  
     data = new FormData()
@@ -187,7 +189,7 @@ function postOccurence(id_ocorrencia, id_acidente, id_plano_voo, oacipass, cnpjp
     data.append('id_acidente', id_acidente)
     data.append('id_plano_voo', id_plano_voo)
     data.append('codigo_oaci', oacipass)
-    data.append('cnpj', cnpjpass)
+    data.append('crm', crmpass)
     data.append('data_hora', data_hora)
     data.append('cod_medico',cod_medico)
     data.append('cod_amb_geral',cod_amb_area)
@@ -195,6 +197,16 @@ function postOccurence(id_ocorrencia, id_acidente, id_plano_voo, oacipass, cnpjp
         let data = d[0]
         console.log(data)
     })
+}
+
+function fetchId(){
+    data = new FormData()
+    let url = "http://127.0.0.1:5000/id"  
+    fetch(url,{"method":"POST","body":data}).then(r=>r.json()).then(d=>{
+        let data = d[0]
+        console.log(data)
+        occ_id = data['max']+1
+    });
 }
 
 
@@ -353,7 +365,7 @@ function getHospitals(geoAcidente){
         cabecalho.appendChild(atributoEnd)
 
         let atributoOACI = document.createElement('th')
-        atributoOACI.innerHTML = 'CNPJ'
+        atributoOACI.innerHTML = 'CRM'
         cabecalho.appendChild(atributoOACI)
 
         let atributoDist = document.createElement('th')
@@ -383,10 +395,10 @@ function getHospitals(geoAcidente){
             nome.innerText = data[i].nome
             option.appendChild(nome)
 
-            let cnpj = document.createElement('td')
-            cnpj.innerText = data[i].cnpj
-            option.appendChild(cnpj)
-            codigo_cnpj.push(data[i].cnpj)
+            let crm = document.createElement('td')
+            crm.innerText = data[i].crm
+            option.appendChild(crm)
+            codigo_crm.push(data[i].crm)
 
             let distancia = document.createElement('td')
             distMeters = distance(geoAcidente[0],data[i].lat,geoAcidente[1],data[i].lng)
@@ -535,7 +547,7 @@ function distance(lat1,
 
   function traceRoute(){
     let routeArray = ['','','']
-    let cnpjpass = ''
+    let crmpass = ''
     let oacipass = ''
     routeArray[1] = geoAcidente
     for(let i = 0;i<helicopterMarkers.length;i++){
@@ -547,9 +559,10 @@ function distance(lat1,
     for(let i = 0;i<hospitalMarkers.length;i++){
         let selector = document.getElementById('hospSel'+i)
         if(selector.classList.contains('selected')){
-            cnpjpass = codigo_cnpj[i]
+            crmpass = codigo_crm[i]
             routeArray[2] = hospitalMarkers[i].getLatLng()}
     }
+    console.log(occ_id)
     console.log(routeArray)
     var polyline = L.polyline(routeArray, {color: 'red'})
     polyline.addTo(map)
@@ -561,5 +574,5 @@ function distance(lat1,
     map.fitBounds(routeArray)
     data = new Date()
     datapass = data.getDate()+'/'+data.getMonth()+'/'+data.getFullYear()+' '+data.getHours()+':'+data.getMinutes()
-    postOccurence(1,selectedId,1,oacipass,cnpjpass,datapass,"test","test")
+    postOccurence(occ_id,selectedId,1,oacipass,crmpass,datapass,"test","test")
   }

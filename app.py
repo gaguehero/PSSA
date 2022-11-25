@@ -83,11 +83,11 @@ def postOcorrencia():
     id_acidente = request.form.get("id_acidente")
     codigo_oaci = request.form.get("codigo_oaci")
     id_plano_voo = request.form.get("id_plano_voo")
-    cnpj = request.form.get("cnpj")
+    crm = request.form.get("crm")
     data_hora = request.form.get("data_hora")
     cod_medico = request.form.get("cod_medico")
     cod_amb_aerea = request.form.get("cod_amb_geral")
-    queryData.append(postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, cnpj, data_hora, cod_medico, cod_amb_aerea)) 
+    queryData.append(postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, data_hora, cod_medico, cod_amb_aerea)) 
     return queryData
 
 class DecimalEncoder(json.JSONEncoder):
@@ -165,7 +165,7 @@ def encontraHospital(posX,posY):
     )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    sqlQuery = '''select cnpj ,nome, lat, lng, A.geom <-> 'SRID=29193;POINT('''+ posX + posY +''')'::geometry as dist, st_AsEWKT(geom)
+    sqlQuery = '''select crm ,nome, lat, lng, A.geom <-> 'SRID=29193;POINT('''+ posX + posY +''')'::geometry as dist, st_AsEWKT(geom)
     from trabalhos.jeferson_hospitais A order by dist limit 6'''
     #Executing an MYSQL function using the execute() method
     cursor.execute(sqlQuery)
@@ -177,7 +177,31 @@ def encontraHospital(posX,posY):
     conn.close()
     return data
 
-def postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, cnpj, data_hora, cod_medico, cod_amb_aerea):
+@app.route('/id', methods=['GET','POST'])
+def fetchId():
+    data = []
+#establishing the connection
+    conn = psycopg2.connect(
+        database=database, 
+        user=user, 
+        password=password, 
+        host=host, 
+        port=port
+    )
+    #Creating a cursor object using the cursor() method
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    sqlQuery = '''select MAX(id_ocorrencia) from trabalhos.jeferson_ocorrencias'''
+    #Executing an MYSQL function using the execute() method
+    cursor.execute(sqlQuery)
+    # Fetch a single row using fetchone() method.
+    data = cursor.fetchall()
+    print("Result of the query: ",data)
+
+    #Closing the connection
+    conn.close()
+    return data
+
+def postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, data_hora, cod_medico, cod_amb_aerea):
 #establishing the connection
     conn = psycopg2.connect(
         database=database, 
@@ -188,8 +212,8 @@ def postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, cnpj,
     )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor()
-    sqlQuery = "INSERT INTO trabalhos.jeferson_ocorrencias(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, cnpj, data_hora, cod_medico, codigo_amb_aerea) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (str(id_ocorrencia), str(id_acidente), id_plano_voo, str(codigo_oaci), str(cnpj), str(data_hora), str(cod_medico), str(cod_amb_aerea))
+    sqlQuery = "INSERT INTO trabalhos.jeferson_ocorrencias(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, data_hora, cod_medico, codigo_amb_aerea) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+    val = (str(id_ocorrencia), str(id_acidente), id_plano_voo, str(codigo_oaci), str(crm), str(data_hora), str(cod_medico), str(cod_amb_aerea))
     #Executing an MYSQL function using the execute() method
     cursor.execute(sqlQuery, val)
     conn.commit()
@@ -235,7 +259,7 @@ def encontraHeliporto(posX,posY):
     )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    sqlQuery = '''select cnpj ,nome, lat, lng, A.geom <-> 'SRID=29193;POINT('''+ posX + posY +''')'::geometry as dist, st_AsEWKT(geom)
+    sqlQuery = '''select codigo_oaci ,nome, lat, lng, A.geom <-> 'SRID=29193;POINT('''+ posX + posY +''')'::geometry as dist, st_AsEWKT(geom)
     from trabalhos.jeferson_hospitais A order by dist limit 1'''
 
 
