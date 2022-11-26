@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="/static/style.css"/>
 
-    <title>PSCAA: Cadastrar Ocorrência</title>
+    <title>PSCAA: Ocurrence Register</title>
 </head>
 
 <body onload="startMap()">
@@ -22,32 +22,32 @@
 
     <ul>
         <li><a href="/index" class="logo"><img src="/static/imgs/Screenshot_6.png" alt="" height="40px"></a></li>
-        <li><a href="/visualize">Visualizar Ocorrência</a></li>
-        <li><a href="/register" class="actual">Registrar Ocorrência</a></li>
-        <li><a href="sobre.html">Sobre Nós</a></li>
-        <li><a href="howto.html">Como Usar</a></li>
+        <li><a href="/visualize">Ocurrence Display</a></li>
+        <li><a href="/register" class="actual">Ocurrence Register</a></li>
+        <li><a href="/sobre">About Us</a></li>
+        <li><a href="howto.html">How to Use</a></li>
         <li id="login"><a href='#' onclick='return logado(1)'>Login</a></li>
     </ul>
    </nav>
    <div id="map"></div>
     <div style="width:30%">
-        <h2>Digite o Local do Acidente</h2>
+        <h2>Search for the accident</h2>
         <table class="corpo">
             <tr>
                 <td  class="corpo">
                        
                        <table>
                         <tr>
-                            <td><label for="dia">Dia do Acidente:</label></td>
+                            <td><label for="dia">Accident Date:</label></td>
                             <td><input type="date" name="dia" id="dia" required> </td>
                         </tr>
                         <tr>
-                            <td><label for="id">ID do Acidente:</label></td>
+                            <td><label for="id">Accident ID:</label></td>
                             <td><input type="text" name="id" id="id"></td>
                         </tr>
                         <tr>
                             <td></td>
-                            <td align="right"><button onclick="searchAccident()">busca</button></td>
+                            <td align="right"><button onclick="searchAccident()">Search</button></td>
                         </tr>
 
                        </table> 
@@ -56,12 +56,32 @@
                 </td>
             </tr>
         </table>
-        <hr>  
+        <hr> 
+        <div id="accidentSel"></div>
+        <div id="heliportSel"></div>
+        <div id="hospitalSel"></div>
+        <button onclick="traceRoute()" id="traceRoute">Register</button>
     </div>
-    <div id="accidentSel"></div>
-    <div id="heliportSel"></div>
-    <div id="hospitalSel"></div>
-    <button onclick="traceRoute()" id="traceRoute">Registrar Rota</button>
-
+    <div id="popup1" class="overlay">
+        <div class="popup">
+            <h2>Register Confirmation</h2>
+            <button class="close" onclick="fecha()">&times;</button>
+            <div id="content">
+                Please write your medical identification and the code for the aerial ambulance:
+                <table>
+                    <tr>
+                        <td><label for="medCode">Medical ID:</label></td>
+                        <td><input type="text" name="medCode" id="medCode" required> </td>
+                    </tr>
+                    <tr>
+                        <td><label for="aerialAmbCode">Aerial Ambulance:</label></td>
+                        <td><input type="text" name="aerialAmbCode" id="aerialAmbCode"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td align="right"><button onclick="finalizeRegister()">Confirm</button></td>
+                    </tr>
+            </div>
+    </div> 
 </body>
 </html>

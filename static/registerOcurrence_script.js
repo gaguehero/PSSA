@@ -63,16 +63,16 @@ function searchAccident(){
         cabecalho.appendChild(atributo)
 
         atributo = document.createElement('th')
-        atributo.innerHTML = 'Horário'
+        atributo.innerHTML = 'Time'
         cabecalho.appendChild(atributo)
 
         atributo = document.createElement('th')
-        atributo.innerHTML =  'Município'
+        atributo.innerHTML =  'City'
         cabecalho.appendChild(atributo)
         tabela.appendChild(cabecalho)
 
         atributo = document.createElement('th')
-        atributo.innerHTML =  'Meteorologia'
+        atributo.innerHTML =  'Meteorology'
         cabecalho.appendChild(atributo)
         tabela.appendChild(cabecalho)
 
@@ -115,7 +115,7 @@ function searchAccident(){
         }
         //<button onclick="selectAcc()" id="selectAcc">Confirmar</button>
         let button = document.createElement('button')
-        button.innerText = 'Confirmar'
+        button.innerText = 'Confirm'
         button.setAttribute('id', 'selectAcc')
         button.setAttribute('onclick','selectAcc()')
         div.appendChild(button)
@@ -248,7 +248,7 @@ function getHelicopters(geoAcidente){
         cabecalho.appendChild(atributo)
 
         let atributoEnd = document.createElement('th')
-        atributoEnd.innerText = 'Endereço'
+        atributoEnd.innerText = 'Address'
         cabecalho.appendChild(atributoEnd)
 
         let atributoOACI = document.createElement('th')
@@ -256,7 +256,7 @@ function getHelicopters(geoAcidente){
         cabecalho.appendChild(atributoOACI)
 
         let atributoDist = document.createElement('th')
-        atributoDist.innerHTML =  'Distancia'
+        atributoDist.innerHTML =  'Distance'
         cabecalho.appendChild(atributoDist)
         tabela.appendChild(cabecalho)
 
@@ -361,7 +361,7 @@ function getHospitals(geoAcidente){
         cabecalho.appendChild(atributo)
 
         let atributoEnd = document.createElement('th')
-        atributoEnd.innerText = 'Nome'
+        atributoEnd.innerText = 'Name'
         cabecalho.appendChild(atributoEnd)
 
         let atributoOACI = document.createElement('th')
@@ -369,7 +369,7 @@ function getHospitals(geoAcidente){
         cabecalho.appendChild(atributoOACI)
 
         let atributoDist = document.createElement('th')
-        atributoDist.innerHTML =  'Distancia'
+        atributoDist.innerHTML =  'Distance'
         cabecalho.appendChild(atributoDist)
         tabela.appendChild(cabecalho)
         for(let i = 0;i<data.length;i++){
@@ -545,10 +545,10 @@ function distance(lat1,
     }   
   }
 
-  function traceRoute(){
+function traceRoute(){
     let routeArray = ['','','']
-    let crmpass = ''
-    let oacipass = ''
+    crmpass = ''
+    oacipass = ''
     routeArray[1] = geoAcidente
     for(let i = 0;i<helicopterMarkers.length;i++){
         let selector = document.getElementById('heliSel'+i)
@@ -572,7 +572,24 @@ function distance(lat1,
     polyline2.addTo(map)
 
     map.fitBounds(routeArray)
+    
+    let overlay = document.getElementById('popup1')
+    overlay.style.visibility = 'visible'
+    overlay.style.opacity = 1
+}
+
+function finalizeRegister(){
+    let codigo_medico = document.getElementById('medCode')
+    let codigo_ambulancia = document.getElementById('aerialAmbCode')
     data = new Date()
     datapass = data.getDate()+'/'+data.getMonth()+'/'+data.getFullYear()+' '+data.getHours()+':'+data.getMinutes()
-    postOccurence(occ_id,selectedId,1,oacipass,crmpass,datapass,"test","test")
-  }
+    postOccurence(occ_id,selectedId,1,oacipass,crmpass,datapass,codigo_medico,codigo_ambulancia)
+    let contentPopup = document.getElementById('content')
+    contentPopup.innerText = 'The occurrence was successfully registered with ID ' + occ_id + '.'
+}
+
+function fecha(){
+    let overlay = document.getElementById('popup1')
+    overlay.style.visibility = 'hidden'
+    overlay.style.opacity = 0
+}

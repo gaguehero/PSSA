@@ -22,10 +22,10 @@
 
     <ul>
         <li><a href="/index" class="logo"><img src="/static/imgs/Screenshot_6.png" alt="" height="40px"></a></li>
-        <li><a href="/visualize" class="actual">Visualizar Ocorrência</a></li>
-        <li><a href="/register">Registrar Ocorrência</a></li>
-        <li><a href="sobre.html">Sobre Nós</a></li>
-        <li><a href="howto.html">Como Usar</a></li>
+        <li><a href="/visualize" class="actual">Ocurrence Display</a></li>
+        <li><a href="/register">Ocurrence Register</a></li>
+        <li><a href="/sobre">About Us</a></li>
+        <li><a href="howto.html">How to Use</a></li>
         <li id="login"><a href='#' onclick='return logado(1)'>Login</a></li>
     </ul>
    </nav>
@@ -34,23 +34,21 @@
         <table class="corpo">
             <tr>
                 <td style="width:30%" class="corpo">
-                        <h2>Selecione Ocorrência</h2>
+                        <h2>Select Occurence</h2>
                             <table>
                                 <tr><td>
-                                    <label for="regiao">Selecione a região:</label>
+                                    <label for="regiao">Select by Accident ID:</label>
                                 </td><td>
-                                    <select name="regiao" id="regiao">
-                                        <option value="" disabled selected>Selecione</option>
-                                    </select>
+                                    <td><input type="text" name="id" id="id"></td>
                                 </td></tr>
                                 <tr><td>
-                                    <label for="dIni">Selecione a data:</label>
+                                    <label for="dIni">Select by date:</label>
                                 </td><td>
                                     <input type="date" name="dIni" id="dIni">
                                 </td></tr>
                                 <tr>
-                                    <td><button onclick="getAmbulancia()">Buscar</button>
-                                    <button onclick="limpar()">Limpar</button></td>
+                                    <td><button onclick="getAmbulancia()">Search</button>
+                                    <button onclick="limpar()">Clear</button></td>
                                 </tr>  
 
                         </table>

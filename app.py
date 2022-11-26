@@ -90,6 +90,10 @@ def postOcorrencia():
     queryData.append(postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, data_hora, cod_medico, cod_amb_aerea)) 
     return queryData
 
+@app.route('/sobre')
+def sobreNos():
+    return render_template('sobre.html')
+
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
         # 👇️ if passed in object is instance of Decimal

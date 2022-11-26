@@ -105,29 +105,29 @@ function getAmbulancia(){
       drawCurvedLine(pontos[1],pontos[0],'green',pontos[1].distancia, active_polyline) 
       let timeReturn = timeAh+timeHa
       let distanciaIda = distha+distah
-      document.getElementById('busca').innerHTML = "<h2 id='h2viagem'>Dados da Viagem</h2>"+
-      "<p> Selecione o trajeto a ser representado:<p>"+
+      document.getElementById('busca').innerHTML = "<h2 id='h2viagem'>Travel data</h2>"+
+      "<p> Select the Route:<p>"+
       "<form id=selTrajeto><input type='radio' id='selTrajetoIdaVolta' name='selTrajeto' value='idaevolta' checked>"+
-      "<label for='selTrajetoIdaVolta'>Ida e Volta</label>"+
+      "<label for='selTrajetoIdaVolta'>Full Route</label>"+
       "<form id=selTrajeto><input type='radio' id='selTrajetoIda' name='selTrajeto' value='ida'>"+
-      "<label for='selTrajetoIda'>Ida</label>"+
+      "<label for='selTrajetoIda'>Outward Route</label>"+
       "<input type='radio' id='selTrajetoVolta' name='selTrajeto' value='volta'>"+
-      "<label for='selTrajetoVolta'>Volta</label></form>"+
+      "<label for='selTrajetoVolta'>Return</label></form>"+
 
-      "<p><b>cnpj do Socorrista:</b> "+pontos[0].cnpj+"</p>"+
+      "<p><b>Rescuer CNPJ:</b> "+pontos[0].cnpj+"</p>"+
 
-      "<p><b>Endereço do Acidente:</b> "+pontos[2].endereco+"m</p>"+
-      "<p><b>Distancia Heliporto - Acidente:</b> "+distha+"m</p>"+
-      "<p><b>Tempo Heliporto - Acidente:</b> "+timeHa.toFixed(2)+"s</p>"+
+      "<p><b>Accident Address:</b> "+pontos[2].endereco+"m</p>"+
+      "<p><b>Distance Heliport - Accident:</b> "+distha+"m</p>"+
+      "<p><b>Travel Time Heliport - Accident:</b> "+timeHa.toFixed(2)+"s</p>"+
 
-      "<p><b>Código OACI:</b> "+pontos[1].codigo_oaci+"</p>"+
-      "<p><b>Nome do Hospital:</b> "+pontos[1].nome+"</p>"+
-      "<p><b>Distância: Acidente - Hospital:</b> "+distah+"m</p>" +
-      "<p><b>Tempo: Acidente - Hospital:</b> "+timeAh.toFixed(2)+"s</p>" +
-      "<p><b>Altitude do Hospital:</b> "+pontos[1].altitude+"m</p>"+
+      "<p><b>OACI Code:</b> "+pontos[1].codigo_oaci+"</p>"+
+      "<p><b>Hospital Name:</b> "+pontos[1].nome+"</p>"+
+      "<p><b>Distance: Accident - Hospital:</b> "+distah+"m</p>" +
+      "<p><b>Travel Time: Accident - Hospital:</b> "+timeAh.toFixed(2)+"s</p>" +
+      "<p><b>Hospital Altitude:</b> "+pontos[1].altitude+"m</p>"+
 
-      "<h3><b>Distância Total:</b> "+(distanciaIda*2)+"m</h3>" +
-      "<h3><b>Tempo Total:</b> "+(timeReturn*2).toFixed(2)+"s</h3>" 
+      "<h3><b>Total Distance:</b> "+(distanciaIda*2)+"m</h3>" +
+      "<h3><b>Total Travel Time:</b> "+(timeReturn*2).toFixed(2)+"s</h3>" 
 
       const selectForm = document.getElementById('selTrajeto')
 
