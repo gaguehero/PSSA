@@ -6,9 +6,9 @@ mapOptions = {
 var estatisticas = []
 const VELOCIDADE = 50
 
-data = new FormData()
-data.append('x','-49.1992531000')
-data.append('y','-25.3812036000')
+// data = new FormData()
+// data.append('x','-49.1992531000')
+// data.append('y','-25.3812036000')
 
 function startMap(){
     map = new L.map('map' , mapOptions);
@@ -18,44 +18,58 @@ function startMap(){
   
 function getAmbulancia(){
   //Endereço do acidente
-  var geocodeService = L.esri.Geocoding.geocodeService({apikey: chave})
-  geocodeService.reverse().latlng([-25.3812036000,-49.1992531000]).run(function (error, result)
-  {
-    if (error) 
-    {
-      return;
-    }
-    acidentSite = result.address.Match_addr
-  })
-
+  // var geocodeService = L.esri.Geocoding.geocodeService({apikey: chave})
+  // geocodeService.reverse().latlng([-25.3812036000,-49.1992531000]).run(function (error, result)
+  // {
+  //   if (error) 
+  //   {
+  //     return;
+  //   }
+  //   acidentSite = result.address.Match_addr
+  //   console.log(acidentSite)
+  // })
+  data = new FormData()
+  let dataSearch = document.getElementById('dIni').value
+  let idSearch = document.getElementById('id').value
+  data.append('id',idSearch)
   let url = "http://127.0.0.1:5000/test"  
   fetch(url,{"method":"POST","body":data}).then(r=>r.json()).then(d=>{
-
+      console.log(d)
       //Recebe os 3 pontos
+      var geocodeService = L.esri.Geocoding.geocodeService({apikey: chave})
+      geocodeService.reverse().latlng([d[0]["latitude"],d[0]["longitude"]]).run(function (error, result)
+      {
+        if (error) 
+        {
+          return;
+        }
+        acidentSite = result.address.Match_addr
+        console.log(acidentSite)
+      })
       pontos = 
       [
         {
           'type': 'Heliporto',
-          'nome': d[1][0].nome,
-          'lat': d[1][0].lat,
-          'lng':d[1][0].lng,
-          'distancia':(d[1][0].dist*100000).toFixed(2),
-          'cnpj':d[1][0].cnpj
+          'nome': d[2][0].nome,
+          'lat': d[2][0].lat,
+          'lng':d[2][0].lng,
+          'distancia':(d[2][0].dist*100000).toFixed(2),
+          'cnpj':d[2][0].cnpj
         },
         {
           'type':'Hospital',
-          'nome':d[0].nome,
-          'lat':parseFloat(d[0].latgeopoint),
-          'lng':parseFloat(d[0].longeopoint),
-          'distancia':(d[0].dist*100000).toFixed(2),
-          'altitude':d[0].altitude,
-          'codigo_oaci':d[0].codigo_oaci
+          'nome':d[1].nome,
+          'lat':parseFloat(d[1].latgeopoint),
+          'lng':parseFloat(d[1].longeopoint),
+          'distancia':(d[1].dist*100000).toFixed(2),
+          'altitude':d[1].altitude,
+          'codigo_oaci':d[1].codigo_oaci
         },
         {
           'type':'Acidente',
           'endereco': acidentSite,
-          'lat': -25.3812036000,
-          'lng': -49.1992531000
+          'lat': d[0]["latitude"],
+          'lng': d[0]['longitude']
         }
       ]
       var active_polyline = L.featureGroup().addTo(map);

@@ -53,11 +53,15 @@ def getAccident():
 def index():
   if request.method == 'POST':
     queryData = []
-    posX = request.form.get("x")
-    posY = request.form.get("y")
-    print("X "+posX +" Y "+ posY)
-    queryData.append(chamaBulancia(posX,posY))
-    queryData.append(encontraHeliporto(posX,posY))
+    idocc = request.form.get("id")
+    print(idocc)
+    occInfo = fetchOccInfo(idocc)
+    ans = encontraAcidente(0 ,id = str(occInfo[0]["id_acidente"]))
+    for row in ans:
+        queryData.append(dict(row))
+    queryData.append(chamaBulancia(str(queryData[0]["longitude"]), str(queryData[0]["latitude"]), occInfo[0]["codigo_oaci"]))
+    queryData.append(encontraHeliporto(str(queryData[0]["longitude"]), str(queryData[0]["latitude"]), str(occInfo[0]["crm"])))
+    print("Query Data: ",queryData)
     return json.dumps(queryData, indent=2, cls=DecimalEncoder, default=str)
 
 @app.route('/heliport', methods=['GET','POST'])
@@ -225,7 +229,38 @@ def postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, 
     #Closing the connection
     conn.close()
 
-def chamaBulancia(posX,posY):
+def fetchOccInfo(id):
+    #establishing the connection
+    conn = psycopg2.connect(
+        database=database, 
+        user=user, 
+        password=password, 
+        host=host, 
+        port=port
+    )
+    #Creating a cursor object using the cursor() method
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    sqlQuery = '''select id_acidente, codigo_oaci, crm
+    from trabalhos.jeferson_ocorrencias
+    where'''
+    if id:
+        sqlQuery= sqlQuery + " id_ocorrencia = " + id
+    #Executing an MYSQL function using the execute() method
+    cursor.execute(sqlQuery)
+
+    # Fetch a single row using fetchone() method.
+    ans = cursor.fetchall()
+    data = []
+    for row in ans:
+        data.append(dict(row))
+    print("Result of the query: ",data)
+
+    #Closing the connection
+    conn.close()
+    #return json.dumps(data, indent=2, cls=DecimalEncoder)
+    return data
+
+def chamaBulancia(posX, posY, id):
     #establishing the connection
     conn = psycopg2.connect(
         database=database, 
@@ -238,21 +273,22 @@ def chamaBulancia(posX,posY):
     cursor = conn.cursor(cursor_factory=RealDictCursor)
     sqlQuery = '''select codigo_oaci,nome, latgeopoint,longeopoint, altitude,largura, superficie, A.the_geom <-> 'SRID=29193;POINT( '''+posX +posY +''')'::geometry AS dist, 
     st_AsEWKT(the_geom) from trabalhos.jeferson_meio_aereo A
-    order by dist limit 6;
-    '''
+    where'''
+    if id:
+        sqlQuery= sqlQuery + " codigo_oaci = '" + id + "'"
     #Executing an MYSQL function using the execute() method
     cursor.execute(sqlQuery)
 
     # Fetch a single row using fetchone() method.
     data = cursor.fetchall()
-    print("Result of the query: ",data[2])
+    print("Result of the query: ",data)
 
     #Closing the connection
     conn.close()
     #return json.dumps(data, indent=2, cls=DecimalEncoder)
-    return data[5]
+    return data
 
-def encontraHeliporto(posX,posY):
+def encontraHeliporto(posX,posY,id):
     #establishing the connection
     conn = psycopg2.connect(
         database=database, 
@@ -263,8 +299,11 @@ def encontraHeliporto(posX,posY):
     )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    sqlQuery = '''select codigo_oaci ,nome, lat, lng, A.geom <-> 'SRID=29193;POINT('''+ posX + posY +''')'::geometry as dist, st_AsEWKT(geom)
-    from trabalhos.jeferson_hospitais A order by dist limit 1'''
+    sqlQuery = '''select crm ,nome, lat, lng, A.geom <-> 'SRID=29193;POINT('''+ posX + posY +''')'::geometry as dist, st_AsEWKT(geom)
+    from trabalhos.jeferson_hospitais A 
+    where'''
+    if id:
+        sqlQuery= sqlQuery + " crm = '" + id + "'"
 
 
     #Executing an MYSQL function using the execute() method
