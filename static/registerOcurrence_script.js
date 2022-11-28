@@ -579,10 +579,12 @@ function traceRoute(){
 }
 
 function finalizeRegister(){
-    let codigo_medico = document.getElementById('medCode')
-    let codigo_ambulancia = document.getElementById('aerialAmbCode')
+    let codigo_medico = document.getElementById('medCode').value
+    let codigo_ambulancia = document.getElementById('aerialAmbCode').value
     data = new Date()
-    datapass = data.getDate()+'/'+data.getMonth()+'/'+data.getFullYear()+' '+data.getHours()+':'+data.getMinutes()
+    mes = data.getMonth()+1
+    datapass = data.getFullYear()+'-'+mes+'-'+data.getDate()
+    console.log(codigo_medico)
     postOccurence(occ_id,selectedId,1,oacipass,crmpass,datapass,codigo_medico,codigo_ambulancia)
     let contentPopup = document.getElementById('content')
     contentPopup.innerText = 'The occurrence was successfully registered with ID ' + occ_id + '.'

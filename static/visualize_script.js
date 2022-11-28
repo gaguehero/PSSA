@@ -6,7 +6,10 @@ mapOptions = {
 var estatisticas = []
 var acidentSite
 const VELOCIDADE = 50
+var id = new Array()
+var oldSelAcc = ''
 var pontos
+var accidentMarkers = new Array();
 
 // data = new FormData()
 // data.append('x','-49.1992531000')
@@ -17,8 +20,174 @@ function startMap(){
     layer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
     map.addLayer(layer);
 }
+function selOccurrence(){
+  let dataSearch = document.getElementById('dIni').value
+  let idSearch = document.getElementById('id').value
+  let url = "http://127.0.0.1:5000/selOcc"
+  data = new FormData()
+  data.append('date',dataSearch)
+  if(idSearch)
+    data.append('id',idSearch)
+  fetch(url,{"method":"POST","body":data}).then(r=>r.json()).then(d=>{
+    let data = d
+    console.log(data)
+    
+    let div = document.getElementById('occSel')
+    div.innerHTML =''
+
+    let selecioneAc = document.createElement('h2')
+    selecioneAc.innerHTML = "Selecione o acidente"
+    div.appendChild(selecioneAc)
+
+    let tabela = document.createElement('table')
+    tabela.setAttribute('id','optionsAccidentess')
+    div.appendChild(tabela)
+
+    let cabecalho = document.createElement('tr')
+
+    let atributo = document.createElement('th')
+    cabecalho.appendChild(atributo)
+
+    atributo = document.createElement('th')
+    atributo.innerText = 'ID'
+    cabecalho.appendChild(atributo)
+
+    atributo = document.createElement('th')
+    atributo.innerHTML = 'ID Acidente'
+    cabecalho.appendChild(atributo)
+
+    atributo = document.createElement('th')
+    atributo.innerHTML =  'CRM'
+    cabecalho.appendChild(atributo)
+    tabela.appendChild(cabecalho)
+
+    atributo = document.createElement('th')
+    atributo.innerHTML =  'Codigo OACI'
+    cabecalho.appendChild(atributo)
+    tabela.appendChild(cabecalho)
+
+    for(let i = (Object.keys(data).length/2)-1; i>=0;i--){
+        j = Object.keys(data).length-1
+        console.log(i , j)
+        let option = document.createElement('tr')
+        option.setAttribute('id','accident'+i)
+
+        let selectorData = document.createElement('td')
+        let selector = document.createElement('input')
+        selector.setAttribute('type','radio')
+        selector.setAttribute('id','acciSel'+i)
+        selector.setAttribute('name','selradioAcci')
+        selector.setAttribute('value',i)
+        selector.setAttribute('onchange','handleSelAcci('+i+')')
+        selectorData.appendChild(selector)
+        option.appendChild(selectorData)
+
+        let iconURL = "/static/imgs/unsel_car-accident.png"
+        placeTemporaryMarker(data[j]['latitude'],data[j]['longitude'],accidentMarkers,iconURL,data[i]['id_acidente'])
+
+        let id_ocorrencia = document.createElement('td')
+        id_ocorrencia.innerText = data[i]['id_ocorrencia']
+        id.push(data[i]['id_ocorrencia'])
+        option.appendChild(id_ocorrencia)
+
+        let id_acidente = document.createElement('td')
+        id_acidente.innerText = data[i]['id_acidente']
+        option.appendChild(id_acidente)
+
+        let crm = document.createElement('td')
+        crm.innerText = data[i]['crm']
+        option.appendChild(crm)
+
+        let oaci = document.createElement('td')
+        oaci.innerText = data[i]['codigo_oaci']
+        option.appendChild(oaci)
+
+        tabela.appendChild(option)
+        j--
+    }
+    //<button onclick="selectAcc()" id="selectAcc">Confirmar</button>
+    let button = document.createElement('button')
+    button.innerText = 'Confirm'
+    button.setAttribute('id', 'selectAcc')
+    button.setAttribute('onclick','selectAcc()')
+    div.appendChild(button)
+    centerLeafletMapOnMarker(map,accidentMarkers)
+})
+}
+
+function placeTemporaryMarker(lat,long,array,iconURL,name){
+  let customIcon ={
+      iconUrl:iconURL,
+      iconSize:[40,40]
+      }
+  let myIcon = L.icon(customIcon)
+  let markerOptions = {
+      icon:myIcon,
+      title:name
+  }
+  lat = parseFloat(lat)
+  long = parseFloat(long)
+  console.log(lat, long)
+  var tempMarker = new L.marker([lat, long],markerOptions).addTo(map);
+  array.push(tempMarker)
   
-function getAmbulancia(){
+}
+
+function centerLeafletMapOnMarker(map, markers, accident=0) {
+  var latLngs = []
+  for(let i = 0; i<markers.length;i++){
+      latLngs[i] = markers[i].getLatLng()
+  }
+  if(accident)
+      latLngs.push(accident)
+  var markerBounds = L.latLngBounds(latLngs);
+  map.fitBounds(markerBounds);
+}
+
+
+function selectAcc(){
+  for(let i = 0;i<accidentMarkers.length;i++){
+      let selector = document.getElementById('acciSel'+i)
+      if(selector.classList.contains('selected')){
+          selectedId = id[i]
+      }
+      else
+          map.removeLayer(accidentMarkers[i])
+  }
+
+  let div = document.getElementById('occSel')
+  div.remove()
+    
+  console.log(selectedId)
+  getAmbulancia(selectedId)
+}
+
+function handleSelAcci(number){
+  //map.removeLayer(helicopterMarkers[number])
+  let customIcon = {
+      iconUrl:"/static/imgs/car-accident.png",
+      iconSize:[40,40]
+     }
+  
+  let newIcon = L.icon(customIcon)
+  accidentMarkers[number].setIcon(newIcon)
+  let selector = document.getElementById("acciSel"+number)
+  selector.classList.add("selected");
+
+  if(oldSelAcc!==''){
+      customIcon = {
+          iconUrl:"/static/imgs/unsel_car-accident.png",
+          iconSize:[40,40]
+      }
+      newIcon = L.icon(customIcon)
+      accidentMarkers[oldSelAcc].setIcon(newIcon)
+      selector = document.getElementById('acciSel'+oldSelAcc)
+      selector.classList.remove("selected")
+  }
+  oldSelAcc = number
+}
+
+function getAmbulancia(selectedId){
   //Endereço do acidente
   // var geocodeService = L.esri.Geocoding.geocodeService({apikey: chave})
   // geocodeService.reverse().latlng([-25.3812036000,-49.1992531000]).run(function (error, result)
@@ -31,9 +200,7 @@ function getAmbulancia(){
   //   console.log(acidentSite)
   // })
   data = new FormData()
-  let dataSearch = document.getElementById('dIni').value
-  let idSearch = document.getElementById('id').value
-  data.append('id',idSearch)
+  data.append('id',selectedId)
   let url = "http://127.0.0.1:5000/test"  
   fetch(url,{"method":"POST","body":data}).then(r=>r.json()).then(d=>{
       //Recebe os 3 pontos
@@ -47,6 +214,77 @@ function getAmbulancia(){
         acidentSite = result.address.Match_addr
         console.log(acidentSite)
       })
+      let data = d[0]
+      console.log(data)
+        
+      // let div = document.getElementById('accidentSel')
+      // div.innerHTML =''
+
+      // let selecioneAc = document.createElement('h2')
+      // selecioneAc.innerHTML = "Selecione a ocorrencia"
+      // div.appendChild(selecioneAc)
+
+      // let tabela = document.createElement('table')
+      // tabela.setAttribute('id','optionsAccidentess')
+      // div.appendChild(tabela)
+
+      // let cabecalho = document.createElement('tr')
+
+      // let atributo = document.createElement('th')
+      // cabecalho.appendChild(atributo)
+
+      // atributo = document.createElement('th')
+      // atributo.innerText = 'ID'
+      // cabecalho.appendChild(atributo)
+
+      // atributo = document.createElement('th')
+      // atributo.innerHTML = 'ID Acidente'
+      // cabecalho.appendChild(atributo)
+
+      // atributo = document.createElement('th')
+      // atributo.innerHTML =  'CRM'
+      // cabecalho.appendChild(atributo)
+      // tabela.appendChild(cabecalho)
+
+      // atributo = document.createElement('th')
+      // atributo.innerHTML =  'Codigo OACI'
+      // cabecalho.appendChild(atributo)
+      // tabela.appendChild(cabecalho)
+
+      // for(let i = 0; i<data.length;i++){
+      //   let option = document.createElement('tr')
+      //   option.setAttribute('id','accident'+i)
+      //   let selectorData = document.createElement('td')
+      //   let selector = document.createElement('input')
+      //   selector.setAttribute('type','radio')
+      //   selector.setAttribute('id','acciSel'+i)
+      //   selector.setAttribute('name','selradioAcci')
+      //   selector.setAttribute('value',i)
+      //   selector.setAttribute('onchange','handleSelAcci('+i+')')
+      //   selectorData.appendChild(selector)
+      //   option.appendChild(selectorData)
+
+      //   let iconURL = "/static/imgs/unsel_car-accident.png"
+      //   placeTemporaryMarker(data[i].latitude,data[i].longitude,accidentMarkers,iconURL,data[i].id_acidente)
+      //   let id_ocorrencia = document.createElement('td')
+      //   id_acidente.innerText = data[i]['id_ocorrencia']
+      //   id.push(data[i]['id_ocorrencia'])
+      //   option.appendChild(id_ocorrencia)
+
+      //   let id_acidente = document.createElement('td')
+      //   horario.innerText = data[i]['id_acidente']
+      //   option.appendChild(id_acidente)
+
+      //   let codigo_crm = document.createElement('td')
+      //   municipio.innerText = data[i]['crm']
+      //   option.appendChild(codigo_crm)
+
+      //   let oaci_table = document.createElement('td')
+      //   meteorologia.innerText = data[i]['codigo_oaci']
+      //   option.appendChild(oaci_table)
+
+      //   tabela.appendChild(option)
+      // }
       setTimeout(() => { 
       pontos = 
       [

@@ -49,13 +49,27 @@ def getAccident():
         queryData.append(encontraAcidente(date))
     return json.dumps(queryData, indent=2, cls=DjangoJSONEncoder)
 
+@app.route('/selOcc', methods=['GET', 'POST'])
+def selOcc():
+    occInfo = []
+    idocc = request.form.get("id")
+    dateocc = request.form.get("date")
+    print(idocc)
+    occInfo = fetchOccInfo(idocc, dateocc)
+    for i in range(len(occInfo)):
+        ans = encontraAcidente(0 ,id = str(occInfo[i]["id_acidente"]))
+        for row in ans:
+            occInfo.append(dict(row))
+    print("Retorno gerado:", occInfo)
+    return json.dumps(occInfo, indent=2, cls=DecimalEncoder, default=str)
+
 @app.route('/test', methods=['GET', 'POST'])
 def index():
   if request.method == 'POST':
     queryData = []
     idocc = request.form.get("id")
     print(idocc)
-    occInfo = fetchOccInfo(idocc)
+    occInfo = fetchOccInfo(idocc, 0)
     ans = encontraAcidente(0 ,id = str(occInfo[0]["id_acidente"]))
     for row in ans:
         queryData.append(dict(row))
@@ -229,7 +243,7 @@ def postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, 
     #Closing the connection
     conn.close()
 
-def fetchOccInfo(id):
+def fetchOccInfo(id, date):
     #establishing the connection
     conn = psycopg2.connect(
         database=database, 
@@ -240,11 +254,15 @@ def fetchOccInfo(id):
     )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    sqlQuery = '''select id_acidente, codigo_oaci, crm
+    sqlQuery = '''select id_ocorrencia, id_acidente, codigo_oaci, crm
     from trabalhos.jeferson_ocorrencias
     where'''
+    print("Data pesquisada: ",date)
     if id:
         sqlQuery= sqlQuery + " id_ocorrencia = " + id
+    else:
+        sqlQuery = sqlQuery + " data_hora = '" + date + "'"
+    
     #Executing an MYSQL function using the execute() method
     cursor.execute(sqlQuery)
 
@@ -253,7 +271,7 @@ def fetchOccInfo(id):
     data = []
     for row in ans:
         data.append(dict(row))
-    print("Result of the query: ",data)
+    print("Result of the query: ",ans)
 
     #Closing the connection
     conn.close()
