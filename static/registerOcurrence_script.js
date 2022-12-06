@@ -46,7 +46,7 @@ function searchAccident(){
         div.innerHTML =''
 
         let selecioneAc = document.createElement('h2')
-        selecioneAc.innerHTML = "Selecione o acidente"
+        selecioneAc.innerHTML = "Select the accident"
         div.appendChild(selecioneAc)
 
         let tabela = document.createElement('table')
@@ -225,7 +225,7 @@ function getHelicopters(geoAcidente){
         div.innerHTML =''
 
         let selecioneHeli = document.createElement('span')
-        selecioneHeli.innerHTML = "Selecione o heliporto "
+        selecioneHeli.innerHTML = "Select the heliport "
         selecioneHeli.setAttribute('class','gaveta')
         selecioneHeli.setAttribute('id','gavetaHelicopter')
         selecioneHeli.addEventListener('click', toogleVisibility,'false')
@@ -338,7 +338,7 @@ function getHospitals(geoAcidente){
         div.innerHTML =''
 
         let selecioneHeli = document.createElement('span')
-        selecioneHeli.innerHTML = "Selecione o hosptial "
+        selecioneHeli.innerHTML = "Select the hospital"
         selecioneHeli.setAttribute('class','gaveta')
         selecioneHeli.setAttribute('id','gavetaHospital')
         selecioneHeli.addEventListener('click', toogleVisibility,'false')
