@@ -156,3 +156,84 @@ button:hover{
     max-height: 30%;
     overflow: auto;
   }
+  .form-box{
+    width: 90%;
+    max-width: 450px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    background: #fff;
+    padding: 50px 60px 70px;
+    text-align: center;
+  }
+  .form-box h1{
+    font-size: 30px;
+    margin-bottom: 60px;
+    color: #8c52ff;
+    position: relative;
+  }
+  .form-box h1::after{
+    content: '';
+    width: 30px;
+    height: 3px;
+    background:#8c52ff;
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .input-field{
+    background: #eaeaea;
+    margin: 15px 0px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+  }
+  .input-field input{
+    width: 100%;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    padding: 18px;
+  }
+
+  .input-field i{
+    margin-left: 15px;
+    color: #999;
+  }
+  .btn-field{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .btn-field button{
+    flex-basis: 48%;
+    height: 40px;
+    border-radius: 20px;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+    background: #8c52ff;
+  }
+  .input-group {
+    height: 280px;
+  }
+  .btn-field button.disable{
+    background: #eaeaea;
+  }
+  .alertaInvalido{
+    text-align: left;
+    color: rgb(195, 73, 73);
+    font-size: 15px;
+  }
+
+  #loginButton{
+    left: 50%;
+    position: relative;
+    transform: translate(-50%, -50%);
+  }
+  #userOperationalExclusive{
+    display: none;
+  }

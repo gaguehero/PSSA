@@ -13,6 +13,8 @@ var oldSelHosp = ''
 var oldSelAcc = ''
 var codigo_oaci = new Array();
 var codigo_crm = new Array();
+var id_plano_voo = new Array();
+var id_aeronave = new Array();
 var id = new Array()
 var selectedId
 var geoAcidente = []
@@ -156,7 +158,6 @@ function selectAcc(){
 }
 
 function handleSelAcci(number){
-    //map.removeLayer(helicopterMarkers[number])
     let customIcon = {
         iconUrl:"/static/imgs/car-accident.png",
         iconSize:[40,40]
@@ -255,6 +256,10 @@ function getHelicopters(geoAcidente){
         atributoOACI.innerHTML = 'OACI'
         cabecalho.appendChild(atributoOACI)
 
+        let numero_aeronave = document.createElement('th')
+        numero_aeronave.innerHTML = 'ID Aeronave'
+        cabecalho.appendChild(numero_aeronave)
+
         let atributoDist = document.createElement('th')
         atributoDist.innerHTML =  'Distance'
         cabecalho.appendChild(atributoDist)
@@ -286,6 +291,13 @@ function getHelicopters(geoAcidente){
             oaci.innerText = data[i].codigo_oaci
             option.appendChild(oaci)
             codigo_oaci.push(data[i].codigo_oaci)
+
+            let identif_aeronave = document.createElement('td')
+            identif_aeronave.innerText = data[i].identif_aeronave
+            option.appendChild(identif_aeronave)
+            id_plano_voo.push(data[i].id_plano_voo)
+            id_aeronave.push(data[i].identif_aeronave)
+
 
             let distancia = document.createElement('td')
             distMeters = distance(geoAcidente[0],data[i].latgeopoint,geoAcidente[1],data[i].longeopoint)
@@ -549,11 +561,15 @@ function traceRoute(){
     let routeArray = ['','','']
     crmpass = ''
     oacipass = ''
+    planvoopass = ''
+    let codigoaeronave
     routeArray[1] = geoAcidente
     for(let i = 0;i<helicopterMarkers.length;i++){
         let selector = document.getElementById('heliSel'+i)
         if(selector.classList.contains('selected')){
             oacipass = codigo_oaci[i]
+            planvoopass = id_plano_voo[i]
+            codigoaeronave = id_aeronave[i]
             routeArray[0] = helicopterMarkers[i].getLatLng()}
     }
     for(let i = 0;i<hospitalMarkers.length;i++){
@@ -574,6 +590,7 @@ function traceRoute(){
     map.fitBounds(routeArray)
     
     let overlay = document.getElementById('popup1')
+    document.getElementById('aerialAmbCode').value = codigoaeronave
     overlay.style.visibility = 'visible'
     overlay.style.opacity = 1
 }
@@ -585,7 +602,7 @@ function finalizeRegister(){
     mes = data.getMonth()+1
     datapass = data.getFullYear()+'-'+mes+'-'+data.getDate()
     console.log(codigo_medico)
-    postOccurence(occ_id,selectedId,1,oacipass,crmpass,datapass,codigo_medico,codigo_ambulancia)
+    postOccurence(occ_id,selectedId,planvoopass,oacipass,crmpass,datapass,codigo_medico,codigo_ambulancia)
     let contentPopup = document.getElementById('content')
     contentPopup.innerText = 'The occurrence was successfully registered with ID ' + occ_id + '.'
 }

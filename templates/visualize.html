@@ -6,11 +6,11 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin="" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="/static/style.css"/>
-
+    <script type="text/javascript" src="/static/checkLogin.js"></script>
     <title>PSCAA: Visualizar Ocorrência</title>
 </head>
 
-<body onload="startMap()">
+<body onload="startMap(),getLogin()">
     <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script> 
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>    
     <script src="https://unpkg.com/esri-leaflet@^3.0.8/dist/esri-leaflet.js"></script>
@@ -20,13 +20,13 @@
     <script type="text/javascript" src="/static/visualize_script.js"></script>
     <nav class="horizontal-menu">
 
+    <nav class="horizontal-menu" onload="getLogin()">
     <ul>
         <li><a href="/index" class="logo"><img src="/static/imgs/Screenshot_6.png" alt="" height="40px"></a></li>
-        <li><a href="/visualize" class="actual">Ocurrence Display</a></li>
-        <li><a href="/register">Ocurrence Register</a></li>
+        <li><a href="/visualize">Ocurrence Display</a></li>
+        <li id="userOperationalExclusive"><a href="/register">Ocurrence Register</a></li>
         <li><a href="/sobre">About Us</a></li>
-        <li><a href="howto.html">How to Use</a></li>
-        <li id="login"><a href='#' onclick='return logado(1)'>Login</a></li>
+        <li id="login"><a href='/login'>Login</a></li>
     </ul>
    </nav>
    <div id="map"></div>

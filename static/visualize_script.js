@@ -5,7 +5,7 @@ mapOptions = {
 }
 var estatisticas = []
 var acidentSite
-const VELOCIDADE = 50
+const VELOCIDADE = 66.67
 var id = new Array()
 var oldSelAcc = ''
 var pontos
@@ -14,6 +14,34 @@ var accidentMarkers = new Array();
 // data = new FormData()
 // data.append('x','-49.1992531000')
 // data.append('y','-25.3812036000')
+
+function formatHora(segs){
+  console.log("Segundos sem format:" + segs)
+  let horas, minutos, segundos
+  if(segs>60){
+    horas = 0
+    minutos =  Math.round(segs/60)
+    segundos = Math.round(segs%60)
+    if (segundos<10)
+      segundos = '0'+segundos
+    if(minutos>60){
+      horas = Math.round(minutos/60)
+      minutos = minutos%60
+      if(minutos<10)
+        minutos = '0'+minutos
+      return horas + ':' + minutos +':' + segundos
+    }
+    if(minutos<10)
+        minutos = '0'+minutos
+    return "00:" + minutos +':' + segundos
+  }
+  segundos = Math.round(segs)
+  if(segs>10)
+    segundos = '0'+segundos
+  return '00:00:'+segundos
+}
+
+
 
 function startMap(){
     map = new L.map('map' , mapOptions);
@@ -188,20 +216,9 @@ function handleSelAcci(number){
 }
 
 function getAmbulancia(selectedId){
-  //Endereço do acidente
-  // var geocodeService = L.esri.Geocoding.geocodeService({apikey: chave})
-  // geocodeService.reverse().latlng([-25.3812036000,-49.1992531000]).run(function (error, result)
-  // {
-  //   if (error) 
-  //   {
-  //     return;
-  //   }
-  //   acidentSite = result.address.Match_addr
-  //   console.log(acidentSite)
-  // })
   data = new FormData()
   data.append('id',selectedId)
-  let url = "http://127.0.0.1:5000/test"  
+  let url = "http://127.0.0.1:5000/visualizaAcidente"  
   fetch(url,{"method":"POST","body":data}).then(r=>r.json()).then(d=>{
       //Recebe os 3 pontos
       var geocodeService = L.esri.Geocoding.geocodeService({apikey: chave})
@@ -216,75 +233,7 @@ function getAmbulancia(selectedId){
       })
       let data = d[0]
       console.log(data)
-        
-      // let div = document.getElementById('accidentSel')
-      // div.innerHTML =''
 
-      // let selecioneAc = document.createElement('h2')
-      // selecioneAc.innerHTML = "Selecione a ocorrencia"
-      // div.appendChild(selecioneAc)
-
-      // let tabela = document.createElement('table')
-      // tabela.setAttribute('id','optionsAccidentess')
-      // div.appendChild(tabela)
-
-      // let cabecalho = document.createElement('tr')
-
-      // let atributo = document.createElement('th')
-      // cabecalho.appendChild(atributo)
-
-      // atributo = document.createElement('th')
-      // atributo.innerText = 'ID'
-      // cabecalho.appendChild(atributo)
-
-      // atributo = document.createElement('th')
-      // atributo.innerHTML = 'ID Acidente'
-      // cabecalho.appendChild(atributo)
-
-      // atributo = document.createElement('th')
-      // atributo.innerHTML =  'CRM'
-      // cabecalho.appendChild(atributo)
-      // tabela.appendChild(cabecalho)
-
-      // atributo = document.createElement('th')
-      // atributo.innerHTML =  'Codigo OACI'
-      // cabecalho.appendChild(atributo)
-      // tabela.appendChild(cabecalho)
-
-      // for(let i = 0; i<data.length;i++){
-      //   let option = document.createElement('tr')
-      //   option.setAttribute('id','accident'+i)
-      //   let selectorData = document.createElement('td')
-      //   let selector = document.createElement('input')
-      //   selector.setAttribute('type','radio')
-      //   selector.setAttribute('id','acciSel'+i)
-      //   selector.setAttribute('name','selradioAcci')
-      //   selector.setAttribute('value',i)
-      //   selector.setAttribute('onchange','handleSelAcci('+i+')')
-      //   selectorData.appendChild(selector)
-      //   option.appendChild(selectorData)
-
-      //   let iconURL = "/static/imgs/unsel_car-accident.png"
-      //   placeTemporaryMarker(data[i].latitude,data[i].longitude,accidentMarkers,iconURL,data[i].id_acidente)
-      //   let id_ocorrencia = document.createElement('td')
-      //   id_acidente.innerText = data[i]['id_ocorrencia']
-      //   id.push(data[i]['id_ocorrencia'])
-      //   option.appendChild(id_ocorrencia)
-
-      //   let id_acidente = document.createElement('td')
-      //   horario.innerText = data[i]['id_acidente']
-      //   option.appendChild(id_acidente)
-
-      //   let codigo_crm = document.createElement('td')
-      //   municipio.innerText = data[i]['crm']
-      //   option.appendChild(codigo_crm)
-
-      //   let oaci_table = document.createElement('td')
-      //   meteorologia.innerText = data[i]['codigo_oaci']
-      //   option.appendChild(oaci_table)
-
-      //   tabela.appendChild(option)
-      // }
       setTimeout(() => { 
       pontos = 
       [
@@ -355,15 +304,21 @@ function getAmbulancia(selectedId){
         pontos[2].endereco,{permanent:true,direction:'right'}).addTo(active_polyline)
       
       distha = drawLine(pontos[0],pontos[2],'blue',pontos[0].distancia, active_polyline, "yes")
-      let timeHa = distha/VELOCIDADE 
+      let timeHa = distha/VELOCIDADE
+      let timeHaFormatado =  formatHora(timeHa)
       distah = drawLine(pontos[2],pontos[1],'red',pontos[1].distancia, active_polyline, "yes")
       let timeAh = distah/VELOCIDADE 
+      console.log('chamando formatHora')
+      let timeAhFormatado = formatHora(timeAh)
       drawCurvedLine(pontos[1],pontos[0],'green',pontos[1].distancia, active_polyline) 
-      let timeReturn = timeAh+timeHa
+      let timeTotal = (timeAh+timeHa)*2
+      let timeReturnFormatado = formatHora(timeTotal)
       distha = parseFloat(distha)
       distah = parseFloat(distah)
       let distanciaIda = distha+distah
       console.log(typeof distha)
+
+
       document.getElementById('busca').innerHTML = "<h2 id='h2viagem'>Travel data</h2>"+
       "<p> Select the Route:<p>"+
       "<form id=selTrajeto><input type='radio' id='selTrajetoIdaVolta' name='selTrajeto' value='idaevolta' checked>"+
@@ -377,16 +332,19 @@ function getAmbulancia(selectedId){
 
       "<p><b>Accident Address:</b> "+pontos[2].endereco+"m</p>"+
       "<p><b>Distance Heliport - Accident:</b> "+distha+"m</p>"+
-      "<p><b>Travel Time Heliport - Accident:</b> "+timeHa.toFixed(2)+"s</p>"+
+      "<p><b>Travel Time Heliport - Accident:</b> "+timeHaFormatado+"</p>"+
 
       "<p><b>OACI Code:</b> "+pontos[1].codigo_oaci+"</p>"+
       "<p><b>Hospital Name:</b> "+pontos[1].nome+"</p>"+
       "<p><b>Distance: Accident - Hospital:</b> "+distah+"m</p>" +
-      "<p><b>Travel Time: Accident - Hospital:</b> "+timeAh.toFixed(2)+"s</p>" +
+
+
+
+      "<p><b>Travel Time: Accident - Hospital:</b> "+timeAhFormatado+"</p>" +
       "<p><b>Hospital Altitude:</b> "+pontos[1].altitude+"m</p>"+
 
       "<h3><b>Total Distance:</b> "+(distanciaIda*2).toFixed(2)+"m</h3>" +
-      "<h3><b>Total Travel Time:</b> "+(timeReturn*2).toFixed(2)+"s</h3>" 
+      "<h3><b>Total Travel Time:</b> "+timeReturnFormatado+"</h3>"
 
       const selectForm = document.getElementById('selTrajeto')
 

@@ -6,19 +6,19 @@
     <link rel="stylesheet" href="/static/style.css">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="/static/script.js"></script>   
+    <script type="text/javascript" src="/static/checkLogin.js"></script>
+
     <title>About Us</title>
 </head>
-<body>
+<body onload="getLogin()">
     <nav class="horizontal-menu">
-        <ul>
-            <li><a href="/index" class="logo"><img src="/static/imgs/Screenshot_6.png" alt="" height="40px"></a></li>
-            <li><a href="/visualize">Ocurrence Display</a></li>
-            <li><a href="/register">Ocurrence Register</a></li>
-            <li><a href="/sobre" class="actual">About Us</a></li>
-            <li><a href="howto.html">How to Use</a></li>
-            <li id="login"><a href='#' onclick='return logado(1)'>Login</a></li>
-        </ul>
-    </nav>
+    <ul>
+        <li><a href="/index" class="logo"><img src="/static/imgs/Screenshot_6.png" alt="" height="40px"></a></li>
+        <li><a href="/visualize">Ocurrence Display</a></li>
+        <li id="userOperationalExclusive"><a href="/register">Ocurrence Register</a></li>
+        <li><a href="/sobre">About Us</a></li>
+        <li id="login"><a href='/login'>Login</a></li>
+    </ul>
     <br>
     <br>
     <img src="/static/imgs/Screenshot_6.png" alt="logo PSCAA" id="aboutLogo">

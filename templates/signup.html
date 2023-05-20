@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="/static/style.css"/>
     <script src="https://kit.fontawesome.com/db8b14679a.js" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="/static/login.js"></script>
+    <script type="text/javascript" src="/static/signup.js"></script>
     <script type="text/javascript" src="/static/checkLogin.js"></script>
 
     <title>PSCAA: Register User</title>
@@ -23,21 +23,37 @@
         </ul>
     </nav>
     <div class="form-box" id = "caixaDoFormulario">
-        <h1>Login</h1>
-        <form action="" id="loginform">
+        <h1>Sign Up</h1>
+        <form action="" id="signupform">
             <div class="input-group">
+                <div class="input-field">
+                    <i class="fa-regular fa-user"></i>
+                    <input type="text" placeholder="Name" id="nameField" required>
+                </div>
                 <div class="input-field">
                     <i class="fa-regular fa-envelope-open"></i>
                     <input type="email" placeholder="Email" id="username" required>
                 </div>
+                <div id="alertaEmailUso" class="alertaInvalido"></div>
+
                 <div class="input-field">
                     <i class="fa-solid fa-key"></i>
                     <input type="password" placeholder="Password" id="password" required>
                 </div>
-                <div id="alertaLoginInvalido" class="alertaInvalido"></div>
+
+                <div class="input-field">
+                    <i class="fa-solid fa-users"></i>
+                    <input type="radio" id="medico" name="User Type" value="medic" required>
+                    <label for="medico">Medic</label>
+                    <input type="radio" id="socorrista" name="User Type" value="rescuer" required>
+                    <label for="socorrista">Rescuer</label>
+                    <input type="radio" id="tripulante" name="User Type" value="crew" required>
+                    <label for="tripulante">Crew Member</label>
+                </div>
             </div>
             <div class="btn-field">
-                <button type="submit"  id="loginButton">Login</button>
+                <button type="submit" id="signUpBtn"">Sign up</button>
+                <button type="button" class="disable" id="loginBtn" onclick="window.location.href='/login';">Login</button>
             </div>
         </form>
     </div>

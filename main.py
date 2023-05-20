@@ -1,6 +1,7 @@
 import json
 import os
 import psycopg2
+import bcrypt
 from decimal import *
 from psycopg2.extras import RealDictCursor
 from django.core.serializers.json import DjangoJSONEncoder
@@ -32,18 +33,93 @@ def visualizer():
 def register():
     return render_template('registerOcurrence.html')
 
+@app.route('/signup')
+def signUp():
+    return render_template('signup.html')
+
+@app.route('/registerUser', methods=['POST'])
+def registerUser():
+    userName = request.form.get("nome")
+    userMail = request.form.get('email')
+    userPass = request.form.get('pass')
+    userType = request.form.get('userType')
+
+    return json.dumps(registrarBanco(userName,userMail,userPass,userType));
+
+
+
+def registrarBanco(name, mail, passw, utype):
+    conn = psycopg2.connect(
+        database=database, 
+        user=user, 
+        password=password, 
+        host=host, 
+        port=port
+    )
+    #Creating a cursor object using the cursor() method
+    cursor = conn.cursor()
+    try:
+        hashedPass = bcrypt.hashpw(passw.encode('utf-8'), bcrypt.gensalt(9)) 
+
+        sqlQuery = "INSERT INTO public.jeferson_usuarios_operacionais(email,password,name,user_type) VALUES (%s, %s, %s, %s)"
+        val = (str(mail), str(hashedPass), str(name), str(utype))
+
+        cursor.execute(sqlQuery, val)
+        conn.commit()
+    except Exception as err:
+        print ("Oops! An exception has occured:",err)
+        if "duplicar valor da chave viola" in str(err):
+            return 0
+        return err
+    #Closing the connection
+    conn.close()
+    return 1
+
+@app.route('/login', methods=['GET','POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    
+    if request.method == 'POST':
+        email = request.form.get('email')
+        passw = request.form.get('pass')
+
+        conn = psycopg2.connect(
+            database=database, 
+            user=user, 
+            password=password, 
+            host=host, 
+            port=port
+        )
+        #Creating a cursor object using the cursor() method
+        cursor = conn.cursor()
+        try:
+            sqlQuery = "SELECT email,password from public.jeferson_usuarios_operacionais where email = '" + email + "'"
+            cursor.execute(sqlQuery)
+            conn.commit()
+            data = cursor.fetchone()
+            passHashed = data[1].split("'")[1]
+        except Exception as err:
+            print ("Oops! An exception has occured:",err)
+            print ("Exception TYPE:", type(err))
+            return json.dumps(False)
+        #Closing the connection
+        conn.close()
+        if bcrypt.checkpw(passw.encode('utf-8'), passHashed.encode('utf-8')):
+            print("login success")
+            return json.dumps(True)
+        else:
+            print("incorrect password")
+            return json.dumps(False)
+
 @app.route('/accident', methods=['GET','POST'])
 def getAccident():
     queryData = []
     date = request.form.get('date')
-    cidade = request.form.get('cidade')
     id = request.form.get('id')
     if id:
         print('Buscando com ID de acidente')
         queryData.append(encontraAcidente(date, id))
-    elif cidade:
-        print('Buscando com cidade e data')
-        queryData.append(encontraAcidente(date,'',cidade))
     else:
         print('Buscando com data')
         queryData.append(encontraAcidente(date))
@@ -63,7 +139,7 @@ def selOcc():
     print("Retorno gerado:", occInfo)
     return json.dumps(occInfo, indent=2, cls=DecimalEncoder, default=str)
 
-@app.route('/test', methods=['GET', 'POST'])
+@app.route('/visualizaAcidente', methods=['GET', 'POST'])
 def index():
   if request.method == 'POST':
     queryData = []
@@ -111,6 +187,27 @@ def postOcorrencia():
 @app.route('/sobre')
 def sobreNos():
     return render_template('sobre.html')
+
+@app.route('/plano_de_voo', methods=['GET','POST'])
+def planoDeVoo():
+    conn = psycopg2.connect(
+        database=database, 
+        user=user, 
+        password=password, 
+        host=host, 
+        port=port
+    )
+    cursor = conn.cursor(cursor_factory=RealDictCursor)
+    sqlQuery = '''select *
+        from trabalhos.jeferson_ocorrencias'''
+    print(sqlQuery)
+    #Executing an MYSQL function using the execute() method
+    cursor.execute(sqlQuery)
+    # Fetch a single row using fetchone() method.
+    data = cursor.fetchall()
+    print("Result of the query: ",data)
+    #Closing the connection
+    conn.close()
 
 class DecimalEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -162,8 +259,10 @@ def encontraHeliport(posX,posY):
     )
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor(cursor_factory=RealDictCursor)
-    sqlQuery = '''select codigo_oaci,nome, latgeopoint,longeopoint, altitude,largura, superficie, A.the_geom <-> 'SRID=29193;POINT( '''+posX +posY +''')'::geometry AS dist, 
-    st_AsEWKT(the_geom) from trabalhos.jeferson_meio_aereo A
+    sqlQuery = '''select codigo_oaci, id_plano_voo, identif_aeronave, nome, latgeopoint,longeopoint, altitude,largura, superficie, A.the_geom <-> 'SRID=29193;POINT( '''+posX +posY +''')'::geometry AS dist, 
+    st_AsEWKT(the_geom) from trabalhos.jeferson_meio_aereo as A
+    inner join trabalhos.jeferson_plano_voo as B 
+    on A.codigo_oaci = B.aerodromo_dep
     order by dist limit 6;
     '''
     #Executing an MYSQL function using the execute() method
@@ -235,7 +334,7 @@ def postaOcorrencia(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, 
     #Creating a cursor object using the cursor() method
     cursor = conn.cursor()
     sqlQuery = "INSERT INTO trabalhos.jeferson_ocorrencias(id_ocorrencia, id_acidente, id_plano_voo, codigo_oaci, crm, data_hora, cod_medico, codigo_amb_aerea) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    val = (str(id_ocorrencia), str(id_acidente), id_plano_voo, str(codigo_oaci), str(crm), str(data_hora), str(cod_medico), str(cod_amb_aerea))
+    val = (str(id_ocorrencia), str(id_acidente), str(id_plano_voo), str(codigo_oaci), str(crm), str(data_hora), str(cod_medico), str(cod_amb_aerea))
     #Executing an MYSQL function using the execute() method
     cursor.execute(sqlQuery, val)
     conn.commit()
@@ -266,7 +365,6 @@ def fetchOccInfo(id, date):
     #Executing an MYSQL function using the execute() method
     cursor.execute(sqlQuery)
 
-    # Fetch a single row using fetchone() method.
     ans = cursor.fetchall()
     data = []
     for row in ans:
