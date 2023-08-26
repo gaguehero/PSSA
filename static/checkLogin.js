@@ -11,6 +11,12 @@ function getLogin(){
     }
 }
 
+function redirectRegister(){
+    if(!logado){
+        window.location.href='/index'
+    }
+}
+
 function logout(){
     sessionStorage.clear()
     window.location.reload();

@@ -56,7 +56,7 @@ def registrarBanco(name, mail, passw, utype):
         host=host, 
         port=port
     )
-    #Creating a cursor object using the cursor() method
+
     cursor = conn.cursor()
     try:
         hashedPass = bcrypt.hashpw(passw.encode('utf-8'), bcrypt.gensalt(9)) 
@@ -71,7 +71,6 @@ def registrarBanco(name, mail, passw, utype):
         if "duplicar valor da chave viola" in str(err):
             return 0
         return err
-    #Closing the connection
     conn.close()
     return 1
 
